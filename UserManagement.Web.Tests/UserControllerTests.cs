@@ -27,11 +27,14 @@ public class UserControllerTests
     [Fact]
     public void List_WhenSpecifyingActiveFilterType_ModelMustOnlyContainActiveUsers()
     {
+        // Arrange
         var controller = CreateController();
         SetupUsers();
 
+        // Act
         var result = controller.List(FilterType.Active);
         
+        // Assert
         _userService.Verify(service => service.FilterByActive(true), Times.Once);
         result.Model.Should()
             .BeOfType<UserListViewModel>()
@@ -41,11 +44,14 @@ public class UserControllerTests
     [Fact]
     public void List_WhenSpecifyingNonActiveFilterType_ModelMustOnlyContainNonActiveUsers()
     {
+        // Arrange
         var controller = CreateController();
         SetupUsers();
 
+        // Act
         var result = controller.List(FilterType.NonActive);
         
+        // Assert
         _userService.Verify(service => service.FilterByActive(false), Times.Once);
         result.Model.Should()
             .BeOfType<UserListViewModel>()
