@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq;
-using UserManagement.Models;
-using UserManagement.Services.Domain.Interfaces;
+using UserManagement.Data.Entities;
+using UserManagement.Services.Interfaces;
 using UserManagement.Web.Models.Users;
 
-namespace UserManagement.WebMS.Controllers;
+namespace UserManagement.Web.Controllers;
 
 [Route("users")]
 public class UsersController : Controller

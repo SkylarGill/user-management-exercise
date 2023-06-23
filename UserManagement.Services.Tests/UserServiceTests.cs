@@ -1,8 +1,9 @@
 using System.Linq;
-using UserManagement.Models;
-using UserManagement.Services.Domain.Implementations;
+using UserManagement.Data;
+using UserManagement.Data.Entities;
+using UserManagement.Services.Implementations;
 
-namespace UserManagement.Data.Tests;
+namespace UserManagement.Services.Tests;
 
 public class UserServiceTests
 {
