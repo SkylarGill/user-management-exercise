@@ -1,8 +1,9 @@
 using System.Linq;
-using UserManagement.Models;
-using UserManagement.Services.Domain.Implementations;
+using UserManagement.Data;
+using UserManagement.Data.Entities;
+using UserManagement.Services.Implementations;
 
-namespace UserManagement.Data.Tests;
+namespace UserManagement.Services.Tests;
 
 public class UserServiceTests
 {
@@ -18,6 +19,34 @@ public class UserServiceTests
 
         // Assert: Verifies that the action of the method under test behaves as expected.
         result.Should().BeSameAs(users);
+    } 
+    
+    [Fact]
+    public void FilterByActive_WhenIsActiveParamIsTrue_MustOnlyReturnEntitiesTrueIsActiveValue()
+    {
+        // Arrange
+        var service = CreateService();
+        var users = SetupUsers();
+
+        // Act
+        var result = service.FilterByActive(true);
+
+        //Assert
+        result.Should().AllSatisfy(model => model.IsActive.Should().BeTrue());;
+    }
+    
+    [Fact]
+    public void FilterByActive_WhenIsActiveParamIsFalse_MustOnlyReturnEntitiesWithFalseIsActiveValue()
+    {
+        // Arrange
+        var service = CreateService();
+        var users = SetupUsers();
+
+        // Act
+        var result = service.FilterByActive(false);
+
+        //Assert
+        result.Should().AllSatisfy(model => model.IsActive.Should().BeFalse());;
     }
 
     private IQueryable<User> SetupUsers(string forename = "Johnny", string surname = "User", string email = "juser@example.com", bool isActive = true)
@@ -30,7 +59,21 @@ public class UserServiceTests
                 Surname = surname,
                 Email = email,
                 IsActive = isActive
-            }
+            },
+            new User
+            {
+                Forename = "David",
+                Surname = "NonActive",
+                Email = "inactive@example.com",
+                IsActive = false
+            },
+            new User
+            {
+                Forename = "Sarah",
+                Surname = "Active",
+                Email = "active@example.com",
+                IsActive = true
+            },
         }.AsQueryable();
 
         _dataContext

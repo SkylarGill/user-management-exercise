@@ -1,9 +1,10 @@
-using UserManagement.Models;
-using UserManagement.Services.Domain.Interfaces;
+using System.Linq;
+using UserManagement.Data.Entities;
+using UserManagement.Services.Interfaces;
+using UserManagement.Web.Controllers;
 using UserManagement.Web.Models.Users;
-using UserManagement.WebMS.Controllers;
 
-namespace UserManagement.Data.Tests;
+namespace UserManagement.Web.Tests;
 
 public class UserControllerTests
 {
@@ -23,6 +24,40 @@ public class UserControllerTests
             .Which.Items.Should().BeEquivalentTo(users);
     }
 
+    [Fact]
+    public void List_WhenSpecifyingActiveFilterType_ModelMustOnlyContainActiveUsers()
+    {
+        // Arrange
+        var controller = CreateController();
+        SetupUsers();
+
+        // Act
+        var result = controller.List(FilterType.Active);
+        
+        // Assert
+        _userService.Verify(service => service.FilterByActive(true), Times.Once);
+        result.Model.Should()
+            .BeOfType<UserListViewModel>()
+            .Which.Items.Should().AllSatisfy(model => model.IsActive.Should().BeTrue());
+    }
+    
+    [Fact]
+    public void List_WhenSpecifyingNonActiveFilterType_ModelMustOnlyContainNonActiveUsers()
+    {
+        // Arrange
+        var controller = CreateController();
+        SetupUsers();
+
+        // Act
+        var result = controller.List(FilterType.NonActive);
+        
+        // Assert
+        _userService.Verify(service => service.FilterByActive(false), Times.Once);
+        result.Model.Should()
+            .BeOfType<UserListViewModel>()
+            .Which.Items.Should().AllSatisfy(model => model.IsActive.Should().BeFalse());
+    }
+
     private User[] SetupUsers(string forename = "Johnny", string surname = "User", string email = "juser@example.com", bool isActive = true)
     {
         var users = new[]
@@ -33,12 +68,34 @@ public class UserControllerTests
                 Surname = surname,
                 Email = email,
                 IsActive = isActive
-            }
+            },
+            new User
+            {
+                Forename = "David",
+                Surname = "NonActive",
+                Email = "inactive@example.com",
+                IsActive = false
+            },
+            new User
+            {
+                Forename = "Sarah",
+                Surname = "Active",
+                Email = "active@example.com",
+                IsActive = true
+            },
         };
 
         _userService
             .Setup(s => s.GetAll())
             .Returns(users);
+
+        _userService
+            .Setup(s => s.FilterByActive(true))
+            .Returns(users.Where(user => user.IsActive));
+        
+        _userService
+            .Setup(s => s.FilterByActive(false))
+            .Returns(users.Where(user => !user.IsActive));
 
         return users;
     }
