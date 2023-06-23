@@ -1,4 +1,5 @@
-﻿@model UserManagement.Web.Models.Users.UserListViewModel
+﻿@using UserManagement.WebMS.Controllers
+@model UserManagement.Web.Models.Users.UserListViewModel
 
 <h2>User List</h2>
 
@@ -54,8 +55,8 @@
 <div>
     <div class="btn-group" role="group">
         <a asp-controller="Users" asp-action="List" class="btn btn-default">Show All</a>
-        <a href="#" class="btn btn-default">Active Only</a>
-        <a href="#" class="btn btn-default">Non Active</a>
+        <a asp-controller="Users" asp-action="List" asp-route-filterType="Active" class="btn btn-default">Active Only</a>
+        <a asp-controller="Users" asp-action="List" asp-route-filterType="NonActive" class="btn btn-default">Non Active</a>
     </div>
 
     <a href="#" class="btn btn-primary float-end">
