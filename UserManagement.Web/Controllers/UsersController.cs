@@ -42,6 +42,7 @@ public class UsersController : Controller
         return View(model);
     }
 
+    [HttpGet]
     [Route("create")]
     public ViewResult Create()
     {
@@ -82,6 +83,38 @@ public class UsersController : Controller
         return RedirectToAction("List");
     }
 
+    [HttpGet]
+    [Route("{id:long}")]
+    public IActionResult Details (long id)
+    {
+        var user = _userService.GetUserById(id);
+
+        if (user == null)
+        {
+            return RedirectToAction("UserNotFound", "Users", new { id = id, });
+        }
+
+        var userViewModel = new UserDetailsViewModel()
+        {
+            Id = user.Id,
+            Forename = user.Forename,
+            Surname = user.Surname,
+            Email = user.Email,
+            DateOfBirth = user.DateOfBirth,
+            IsActive = user.IsActive
+        };
+        
+        return View(userViewModel);
+    }
+
+    [HttpGet]
+    [Route("notfound/{id:long}")]
+    public IActionResult UserNotFound([FromRoute] long id)
+    {
+        return View(new UserNotFoundViewModel(id));
+    }
+    
+
     private IEnumerable<User> GetFilteredUsers(FilterType filterType) =>
         filterType switch
         {
@@ -92,9 +125,3 @@ public class UsersController : Controller
         };
 }
 
-public enum FilterType
-{
-    All,
-    Active,
-    NonActive
-}

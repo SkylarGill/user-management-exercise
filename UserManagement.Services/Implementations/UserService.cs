@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UserManagement.Data;
 using UserManagement.Data.Entities;
@@ -25,4 +26,8 @@ public class UserService : IUserService
     {
         _dataAccess.Create(user);
     }
+
+    public User? GetUserById (long id) =>
+        _dataAccess.GetAll<User>()
+            .FirstOrDefault(user => user.Id == id);
 }
