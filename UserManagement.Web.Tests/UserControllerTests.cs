@@ -1,9 +1,10 @@
 using System;
 using System.Linq;
+using FluentValidation;
 using UserManagement.Data.Entities;
+using UserManagement.Models.Users;
 using UserManagement.Services.Interfaces;
 using UserManagement.Web.Controllers;
-using UserManagement.Web.Models.Users;
 
 namespace UserManagement.Web.Tests;
 
@@ -105,5 +106,5 @@ public class UserControllerTests
     }
 
     private readonly Mock<IUserService> _userService = new();
-    private UsersController CreateController() => new(_userService.Object);
+    private UsersController CreateController() => new(_userService.Object, Mock.Of<IValidator<CreateUserViewModel>>());
 }

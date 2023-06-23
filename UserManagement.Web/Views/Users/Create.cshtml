@@ -1,0 +1,34 @@
+@model UserManagement.Models.Users.CreateUserViewModel
+
+<h2>Add User</h2>
+
+<form asp-action="Create" class="border border-2 p-4 rounded">
+    <div class="form-group mb-3">
+         <label class="form-label mb-2" asp-for="Forename"></label>
+        <input type="text" class="form-control" placeholder="Forename" asp-for="Forename"/>
+        <span asp-validation-for="Forename" class="text-danger"></span>
+    </div>
+    <div class="form-group mb-3">
+        <label class="form-label mb-2" asp-for="Surname"></label>
+        <input type="text" class="form-control" placeholder="Surname" asp-for="Surname"/>
+        <span asp-validation-for="Surname" class="text-danger"></span>
+    </div>
+    <div class="form-group mb-3">
+        <label class="form-label mb-2" asp-for="Email"></label>
+        <input type="email" class="form-control" placeholder="Email" asp-for="Email"/>
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <div class="form-group mb-3">
+        <label class="form-label mb-2" for="isActive">Date of Birth</label>
+        <input type="date" class="form-control" asp-for="DateOfBirth"/>
+        <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+    </div>
+    <div class="form-group mb-3">
+        <div class="h-25 form-check form-switch">
+            <label class="form-check-label" for="isActive">Is Active?</label>
+            <input type="checkbox" class="form-check-input" id="isActive" asp-for="IsActive"/>
+            <span asp-validation-for="IsActive" class="text-danger"></span>
+        </div>
+    </div>
+    <input type="submit" class="btn btn-primary" value="Create User"/>
+</form>

@@ -2,6 +2,18 @@
 
 [![.NET](https://github.com/SkylarGill/user-management-exercise/actions/workflows/dotnet.yml/badge.svg)](https://github.com/SkylarGill/user-management-exercise/actions/workflows/dotnet.yml)
 
+## Task Implementation Notes
+
+### Packages
+
+- **FluentValidation** 
+  - I used FluentValidation for implementing the request validation for create/update actions. 
+  - It's a library for implementing easily-understandable validation services. 
+  - No extra steps are required beyond restoring NuGet packages.
+
+
+## Original Task
+
 The exercise is an ASP.NET Core web application backed by Entity Framework Core, which faciliates management of some fictional users.
 We recommend that you use [Visual Studio (Community Edition)](https://visualstudio.microsoft.com/downloads) or [Visual Studio Code](https://code.visualstudio.com/Download) to run and modify the application. 
 
