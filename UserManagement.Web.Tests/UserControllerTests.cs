@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using UserManagement.Data.Entities;
 using UserManagement.Services.Interfaces;
@@ -67,21 +68,24 @@ public class UserControllerTests
                 Forename = forename,
                 Surname = surname,
                 Email = email,
-                IsActive = isActive
+                IsActive = isActive, 
+                DateOfBirth = new DateTime(1990, 6, 24)
             },
             new User
             {
                 Forename = "David",
                 Surname = "NonActive",
                 Email = "inactive@example.com",
-                IsActive = false
+                IsActive = false, 
+                DateOfBirth = new DateTime(1984, 12, 1)
             },
             new User
             {
                 Forename = "Sarah",
                 Surname = "Active",
                 Email = "active@example.com",
-                IsActive = true
+                IsActive = true, 
+                DateOfBirth = new DateTime(1963, 7, 14)
             },
         };
 

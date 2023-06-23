@@ -1,3 +1,5 @@
+using System;
+
 namespace UserManagement.Web.Models.Users;
 
 public class UserListItemViewModel
@@ -6,5 +8,6 @@ public class UserListItemViewModel
     public string? Forename { get; set; }
     public string? Surname { get; set; }
     public string? Email { get; set; }
+    public DateTime DateOfBirth { get; set; }
     public bool IsActive { get; set; }
 }
