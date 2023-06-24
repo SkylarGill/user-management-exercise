@@ -26,6 +26,11 @@ public class UserService : IUserService
     {
         _dataAccess.Create(user);
     }
+    
+    public void UpdateUser(User user)
+    {
+        _dataAccess.Update(user);
+    }
 
     public User? GetUserById (long id) =>
         _dataAccess.GetAll<User>()

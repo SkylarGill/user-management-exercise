@@ -14,6 +14,7 @@ public static class ServiceCollectionExtensions
         return services
             .AddScoped<IUserService, UserService>()
             .AddScoped<IValidator<CreateUserViewModel>, CreateUserViewModelValidator>()
+            .AddScoped<IValidator<EditUserViewModel>, EditUserViewModelValidator>()
             .AddScoped<ICurrentDateProvider, CurrentDateProvider>();
     }
 }

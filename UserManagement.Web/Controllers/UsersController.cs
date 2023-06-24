@@ -12,11 +12,16 @@ public class UsersController : Controller
 {
     private readonly IUserService _userService;
     private readonly IValidator<CreateUserViewModel> _createUserViewModelValidator;
+    private readonly IValidator<EditUserViewModel> _editUserViewModelValidator;
 
-    public UsersController(IUserService userService, IValidator<CreateUserViewModel> createUserViewModelValidator)
+    public UsersController(
+        IUserService userService, 
+        IValidator<CreateUserViewModel> createUserViewModelValidator, 
+        IValidator<EditUserViewModel> editUserViewModelValidator)
     {
         _userService = userService;
         _createUserViewModelValidator = createUserViewModelValidator;
+        _editUserViewModelValidator = editUserViewModelValidator;
     }
 
 
@@ -62,10 +67,6 @@ public class UsersController : Controller
             {
                 ModelState.AddModelError(error.PropertyName, error.ErrorMessage);   
             }   
-        }
-
-        if (!ModelState.IsValid)
-        {
             return View(createUserViewModel);
         }
 
@@ -85,11 +86,11 @@ public class UsersController : Controller
 
     [HttpGet]
     [Route("{id:long}")]
-    public IActionResult Details (long id)
+    public IActionResult Details ([FromRoute]long id)
     {
         var user = _userService.GetUserById(id);
 
-        if (user == null)
+        if (user is null)
         {
             return RedirectToAction("UserNotFound", "Users", new { id = id, });
         }
@@ -106,6 +107,72 @@ public class UsersController : Controller
         
         return View(userViewModel);
     }
+
+    [HttpGet]
+    [Route("edit/{editId:long}")]
+    public IActionResult Edit([FromRoute] long editId, EditUserViewModel editUserViewModel)
+    {
+        if (editUserViewModel.HasValidationErrors)
+        {
+            return View(editUserViewModel);
+        }
+        
+        var user = _userService.GetUserById(editId);
+
+        if (user is null)
+        {
+            return RedirectToAction("UserNotFound", "Users", new { id = editId, });
+        }
+
+        var userViewModel = new EditUserViewModel()
+        {
+            Id = user.Id,
+            Forename = user.Forename,
+            Surname = user.Surname,
+            Email = user.Email,
+            DateOfBirth = user.DateOfBirth,
+            IsActive = user.IsActive
+        };
+
+        ModelState.Clear();
+        return View(userViewModel);
+    }
+
+    [HttpPost]
+    [Route("edit/{id:long}")]
+    public IActionResult SubmitEdit(long id, EditUserViewModel editUserViewModel)
+    {
+        var validationResult = _editUserViewModelValidator.Validate(editUserViewModel);
+
+        if (!validationResult.IsValid)
+        {
+            ModelState.Clear();
+            foreach (var error in validationResult.Errors)
+            {
+                ModelState.AddModelError(error.PropertyName, error.ErrorMessage);   
+            }   
+            
+            editUserViewModel.HasValidationErrors = true;
+            return View("Edit", editUserViewModel);
+        }
+
+        var user = _userService.GetUserById(editUserViewModel.Id);
+        if (user is null)
+        {
+            return RedirectToAction("UserNotFound", new { id });
+        }
+
+        user.Forename = editUserViewModel.Forename;
+        user.Surname = editUserViewModel.Surname;
+        user.Email = editUserViewModel.Email;
+        user.IsActive = editUserViewModel.IsActive;
+        user.DateOfBirth = editUserViewModel.DateOfBirth;
+
+        _userService.UpdateUser(user);
+
+        return RedirectToAction("List");
+    }
+    
 
     [HttpGet]
     [Route("notfound/{id:long}")]

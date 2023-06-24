@@ -106,5 +106,5 @@ public class UserControllerTests
     }
 
     private readonly Mock<IUserService> _userService = new();
-    private UsersController CreateController() => new(_userService.Object, Mock.Of<IValidator<CreateUserViewModel>>());
+    private UsersController CreateController() => new(_userService.Object, Mock.Of<IValidator<CreateUserViewModel>>(), Mock.Of<IValidator<EditUserViewModel>>());
 }
