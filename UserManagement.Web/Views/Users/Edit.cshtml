@@ -1,5 +1,9 @@
 @model UserManagement.Models.Users.EditUserViewModel
 
+@{
+    ViewBag.Title = $"Edit User {Model.Id}";
+}
+
 <h2>Edit User</h2>
 
 <form asp-action="SubmitEdit" asp-route-id="@Model.Id" class="border border-2 p-4 rounded">
