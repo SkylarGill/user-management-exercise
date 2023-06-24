@@ -1,4 +1,4 @@
-namespace UserManagement.Web.Controllers;
+namespace UserManagement.Models;
 
 public enum FilterType
 {

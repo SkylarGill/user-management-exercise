@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using FluentValidation;
 using UserManagement.Data.Entities;
+using UserManagement.Models;
 using UserManagement.Models.Users;
 using UserManagement.Services.Interfaces;
 using UserManagement.Web.Controllers;
