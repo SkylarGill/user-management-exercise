@@ -35,4 +35,9 @@ public class UserService : IUserService
     public User? GetUserById (long id) =>
         _dataAccess.GetAll<User>()
             .FirstOrDefault(user => user.Id == id);
+
+    public void DeleteUser(User user)
+    {
+        _dataAccess.Delete(user);
+    }
 }

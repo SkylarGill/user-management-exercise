@@ -109,19 +109,19 @@ public class UsersController : Controller
     }
 
     [HttpGet]
-    [Route("edit/{editId:long}")]
-    public IActionResult Edit([FromRoute] long editId, EditUserViewModel editUserViewModel)
+    [Route("edit/{id:long}")]
+    public IActionResult Edit([FromRoute] long id, EditUserViewModel editUserViewModel)
     {
         if (editUserViewModel.HasValidationErrors)
         {
             return View(editUserViewModel);
         }
         
-        var user = _userService.GetUserById(editId);
+        var user = _userService.GetUserById(id);
 
         if (user is null)
         {
-            return RedirectToAction("UserNotFound", "Users", new { id = editId, });
+            return RedirectToAction("UserNotFound", "Users", new { id = id, });
         }
 
         var userViewModel = new EditUserViewModel()
@@ -159,7 +159,7 @@ public class UsersController : Controller
         var user = _userService.GetUserById(editUserViewModel.Id);
         if (user is null)
         {
-            return RedirectToAction("UserNotFound", new { id });
+            return RedirectToAction("UserNotFound", new { id = id });
         }
 
         user.Forename = editUserViewModel.Forename;
@@ -169,6 +169,23 @@ public class UsersController : Controller
         user.DateOfBirth = editUserViewModel.DateOfBirth;
 
         _userService.UpdateUser(user);
+
+        return RedirectToAction("List");
+    }
+
+    
+    [HttpGet]
+    [Route("delete/{id:long}")]
+    public IActionResult Delete(long id)
+    {
+        var user = _userService.GetUserById(id);
+
+        if (user is null)
+        {
+            return RedirectToAction("UserNotFound", new { id = id });
+        }
+        
+        _userService.DeleteUser(user);
 
         return RedirectToAction("List");
     }
