@@ -1,8 +1,5 @@
-using Microsoft.AspNetCore.Mvc;
-
 namespace UserManagement.Models.Users;
 
-[BindProperties]
 public class UserDetailsViewModel
 {
     public long Id { get; set; }
