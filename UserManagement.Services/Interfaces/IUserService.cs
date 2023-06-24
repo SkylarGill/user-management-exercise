@@ -12,4 +12,8 @@ public interface IUserService
     /// <returns></returns>
     IEnumerable<User> FilterByActive(bool isActive);
     IEnumerable<User> GetAll();
+    void CreateUser(User user);
+    void UpdateUser(User user);
+    User? GetUserById(long id);
+    void DeleteUser(User user);
 }

@@ -1,8 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="11.5.2" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\UserManagement.Data\UserManagement.Data.csproj" />
+    <ProjectReference Include="..\UserManagement.Models\UserManagement.Models.csproj" />
   </ItemGroup>
 </Project>
