@@ -93,7 +93,7 @@ public class UsersController : Controller
 
         if (user is null)
         {
-            return RedirectToAction("UserNotFound", "Users", new { id = id, });
+            return RedirectToAction("UserNotFound", new { id = id, });
         }
 
         var userViewModel = new UserDetailsViewModel()
@@ -122,7 +122,7 @@ public class UsersController : Controller
 
         if (user is null)
         {
-            return RedirectToAction("UserNotFound", "Users", new { id = id, });
+            return RedirectToAction("UserNotFound", new { id = id, });
         }
 
         var userViewModel = new EditUserViewModel()
