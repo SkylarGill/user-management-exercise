@@ -37,5 +37,6 @@
         </div>
     </fieldset>
     
-    <button class="btn btn-primary">Edit User</button>
+    <button class="btn btn-primary " onclick="location.href='@Url.Action("Edit", new {id = @Model.Id})'">Edit User</button>
+    <button class="btn btn-danger ms-2" onclick="location.href='@Url.Action("Delete", new {id = @Model.Id})'">Delete User</button>
 </div>
