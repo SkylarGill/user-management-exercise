@@ -3,6 +3,7 @@ using System.Linq;
 using UserManagement.Data;
 using UserManagement.Data.Entities;
 using UserManagement.Services.Implementations;
+using UserManagement.Services.Interfaces.AuditLogs;
 
 namespace UserManagement.Services.Tests;
 
@@ -27,7 +28,7 @@ public class UserServiceTests
     {
         // Arrange
         var service = CreateService();
-        var users = SetupUsers();
+        SetupUsers();
 
         // Act
         var result = service.FilterByActive(true);
@@ -41,7 +42,7 @@ public class UserServiceTests
     {
         // Arrange
         var service = CreateService();
-        var users = SetupUsers();
+        SetupUsers();
 
         // Act
         var result = service.FilterByActive(false);
@@ -88,5 +89,6 @@ public class UserServiceTests
     }
 
     private readonly Mock<IDataContext> _dataContext = new();
-    private UserService CreateService() => new(_dataContext.Object);
+    private readonly Mock<IAuditLogService> _auditLogService = new();
+    private UserService CreateService() => new(_dataContext.Object, _auditLogService.Object);
 }

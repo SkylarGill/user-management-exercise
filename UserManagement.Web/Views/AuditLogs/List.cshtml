@@ -1,0 +1,20 @@
+﻿@using System.Globalization
+@model UserManagement.Models.Logging.LogListViewModel;
+
+@{
+    ViewBag.Title = "Logs";
+}
+
+<h2>Logs</h2>
+
+<partial name="LogTable" model="Model.Items"/>
+
+<div>
+    <div class="btn-group" role="group">
+        <a asp-controller="AuditLogs" asp-action="List" class="btn btn-default">Show All</a>
+        <a asp-controller="AuditLogs" asp-action="List" asp-route-filterType="Create" class="btn btn-default">Create Only</a>
+        <a asp-controller="AuditLogs" asp-action="List" asp-route-filterType="Update" class="btn btn-default">Update Only</a>
+        <a asp-controller="AuditLogs" asp-action="List" asp-route-filterType="Delete" class="btn btn-default">Delete Only</a>
+    </div>
+</div>
+

@@ -3,8 +3,10 @@ using System.Linq;
 using FluentValidation;
 using UserManagement.Data.Entities;
 using UserManagement.Models;
+using UserManagement.Models.Logging;
 using UserManagement.Models.Users;
 using UserManagement.Services.Interfaces;
+using UserManagement.Services.Interfaces.AuditLogs;
 
 namespace UserManagement.Web.Controllers;
 
@@ -14,15 +16,18 @@ public class UsersController : Controller
     private readonly IUserService _userService;
     private readonly IValidator<CreateUserViewModel> _createUserViewModelValidator;
     private readonly IValidator<EditUserViewModel> _editUserViewModelValidator;
+    private readonly IAuditLogService _auditLogService;
 
     public UsersController(
         IUserService userService, 
         IValidator<CreateUserViewModel> createUserViewModelValidator, 
-        IValidator<EditUserViewModel> editUserViewModelValidator)
+        IValidator<EditUserViewModel> editUserViewModelValidator,
+        IAuditLogService auditLogService)
     {
         _userService = userService;
         _createUserViewModelValidator = createUserViewModelValidator;
         _editUserViewModelValidator = editUserViewModelValidator;
+        _auditLogService = auditLogService;
     }
 
 
@@ -96,6 +101,17 @@ public class UsersController : Controller
             return RedirectToAction("UserNotFound", new { id = id, });
         }
 
+        var auditLogEntries = _auditLogService.GetAll()
+            .Where(entry => entry.UserId == id)
+            .Select(entry => new LogListItemViewModel
+            {
+                Id = entry.Id,
+                Action = entry.Action,
+                Message = entry.Message,
+                Time = entry.Time,
+                UserId = entry.UserId,
+            });
+
         var userViewModel = new UserDetailsViewModel()
         {
             Id = user.Id,
@@ -103,7 +119,8 @@ public class UsersController : Controller
             Surname = user.Surname,
             Email = user.Email,
             DateOfBirth = user.DateOfBirth,
-            IsActive = user.IsActive
+            IsActive = user.IsActive,
+            AuditLogEntries = auditLogEntries.ToList()
         };
         
         return View(userViewModel);

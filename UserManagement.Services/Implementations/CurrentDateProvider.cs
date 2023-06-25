@@ -9,4 +9,9 @@ public class CurrentDateProvider : ICurrentDateProvider
     {
         return DateTime.Now.Date;
     }
+
+    public DateTime GetCurrentDateTime()
+    {
+        return DateTime.Now;
+    }
 }

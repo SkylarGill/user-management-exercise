@@ -1,16 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using UserManagement.Data;
 using UserManagement.Data.Entities;
+using UserManagement.Services.Exceptions;
 using UserManagement.Services.Interfaces;
+using UserManagement.Services.Interfaces.AuditLogs;
 
 namespace UserManagement.Services.Implementations;
 
 public class UserService : IUserService
 {
     private readonly IDataContext _dataAccess;
-    public UserService(IDataContext dataAccess) => _dataAccess = dataAccess;
+    private readonly IAuditLogService _auditLogService;
+
+    public UserService(IDataContext dataAccess, IAuditLogService auditLogService)
+    {
+        _dataAccess = dataAccess;
+        _auditLogService = auditLogService;
+    }
 
     /// <summary>
     /// Return users by active state
@@ -25,11 +33,19 @@ public class UserService : IUserService
     public void CreateUser(User user)
     {
         _dataAccess.Create(user);
+        _auditLogService.LogCreate(user);
     }
     
     public void UpdateUser(User user)
     {
+        var oldUser = _dataAccess.GetAll<User>().AsNoTracking().FirstOrDefault(u => u.Id == user.Id);
+        if (oldUser is null)
+        {
+            throw new UserMissingFromDataContextException(user.Id);
+        }
+
         _dataAccess.Update(user);
+        _auditLogService.LogUpdate(oldUser, user);
     }
 
     public User? GetUserById (long id) =>
@@ -39,5 +55,6 @@ public class UserService : IUserService
     public void DeleteUser(User user)
     {
         _dataAccess.Delete(user);
+        _auditLogService.LogDelete(user);
     }
 }

@@ -5,4 +5,6 @@ namespace UserManagement.Services.Interfaces;
 public interface ICurrentDateProvider
 {
     DateTime GetCurrentDate();
+
+    DateTime GetCurrentDateTime();
 }
