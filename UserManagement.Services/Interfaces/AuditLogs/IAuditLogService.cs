@@ -1,0 +1,9 @@
+using System.Collections.Generic;
+using UserManagement.Data.Entities;
+
+namespace UserManagement.Services.Interfaces.AuditLogs;
+
+public interface IAuditLogService
+{
+    IEnumerable<AuditLogEntry> GetAll();
+}

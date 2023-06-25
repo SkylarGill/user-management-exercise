@@ -6,9 +6,8 @@ using FluentValidation.Results;
 using UserManagement.Data.Entities;
 using UserManagement.Models.Users;
 using UserManagement.Services.Interfaces;
-using UserManagement.Web.Controllers;
 
-namespace UserManagement.Web.Tests.Controllers.UserController;
+namespace UserManagement.Web.Tests.Controllers.UsersController;
 
 public static class UsersControllerTestHelpers
 {
@@ -94,7 +93,7 @@ public static class UsersControllerTestHelpers
         return users;
     }
 
-    public static UsersController CreateController(
+    public static Web.Controllers.UsersController CreateController(
         Mock<IUserService> userService,
         Mock<IValidator<CreateUserViewModel>> createUserViewModelValidator,
         Mock<IValidator<EditUserViewModel>> editUserViewModelValidator) =>

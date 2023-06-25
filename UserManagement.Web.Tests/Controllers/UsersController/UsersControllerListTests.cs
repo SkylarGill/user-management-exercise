@@ -3,7 +3,7 @@ using UserManagement.Models;
 using UserManagement.Models.Users;
 using UserManagement.Services.Interfaces;
 
-namespace UserManagement.Web.Tests.Controllers.UserController;
+namespace UserManagement.Web.Tests.Controllers.UsersController;
 
 public class UsersControllerListTests
 {

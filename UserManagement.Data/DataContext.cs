@@ -2,6 +2,7 @@
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using UserManagement.Data.Entities;
+using UserManagement.Models.Logs;
 
 namespace UserManagement.Data;
 
