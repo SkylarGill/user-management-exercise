@@ -39,7 +39,8 @@ public class DataContext : DbContext, IDataContext
                 Time = DateTime.Now,
                 Action = AuditLogAction.Create,
                 AfterSnapshotId = i + 1,
-                UserId = u.Id
+                UserId = u.Id,
+                Message = $"User created with ID '{u.Id}'"
             });
 
         var auditLogSnapshots = users.Select((u, i) => new AuditLogSnapshot(u, i + 1));

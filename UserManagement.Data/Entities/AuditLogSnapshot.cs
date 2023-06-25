@@ -8,6 +8,15 @@ public class AuditLogSnapshot
 {
     public AuditLogSnapshot() { }
 
+    public AuditLogSnapshot(User user)
+    {
+        Forename = user.Forename;
+        Surname = user.Surname;
+        Email = user.Email;
+        DateOfBirth = user.DateOfBirth;
+        IsActive = user.IsActive;
+    }
+    
     public AuditLogSnapshot(User user, long id)
     {
         Id = id;

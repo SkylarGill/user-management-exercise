@@ -3,6 +3,8 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using UserManagement.Data;
 using UserManagement.Data.Entities;
+using UserManagement.Models.Logging;
+using UserManagement.Services.Interfaces;
 using UserManagement.Services.Interfaces.AuditLogs;
 
 namespace UserManagement.Services.Implementations.AuditLogs;
@@ -10,10 +12,12 @@ namespace UserManagement.Services.Implementations.AuditLogs;
 public class AuditLogService : IAuditLogService
 {
     private readonly IDataContext _dataContext;
+    private readonly ICurrentDateProvider _currentDateProvider;
 
-    public AuditLogService(IDataContext dataContext)
+    public AuditLogService(IDataContext dataContext, ICurrentDateProvider currentDateProvider)
     {
         _dataContext = dataContext;
+        _currentDateProvider = currentDateProvider;
     }
 
     public IEnumerable<AuditLogEntry> GetAll() => _dataContext.GetAll<AuditLogEntry>();
@@ -23,6 +27,19 @@ public class AuditLogService : IAuditLogService
             .GetAll<AuditLogEntry>()
             .Include(entry => entry.AfterSnapshot)
             .Include(entry => entry.BeforeSnapshot)
-            .FirstOrDefault(entry => entry.Id == id)
-        ;
+            .FirstOrDefault(entry => entry.Id == id);
+
+    public void LogCreate(User user)
+    {
+        var logEntry = new AuditLogEntry
+        {
+            Action = AuditLogAction.Create,
+            AfterSnapshot = new AuditLogSnapshot(user),
+            Time = _currentDateProvider.GetCurrentDateTime(),
+            Message = $"User created with ID '{user.Id}'",
+            UserId = user.Id,
+        };
+        
+        _dataContext.Create(logEntry);
+    }
 }

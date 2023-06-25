@@ -7,4 +7,5 @@ public interface IAuditLogService
 {
     IEnumerable<AuditLogEntry> GetAll();
     AuditLogEntry? GetAuditLogEntryById(long id);
+    void LogCreate(User user);
 }

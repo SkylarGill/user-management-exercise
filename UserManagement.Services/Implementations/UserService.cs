@@ -4,13 +4,20 @@ using System.Linq;
 using UserManagement.Data;
 using UserManagement.Data.Entities;
 using UserManagement.Services.Interfaces;
+using UserManagement.Services.Interfaces.AuditLogs;
 
 namespace UserManagement.Services.Implementations;
 
 public class UserService : IUserService
 {
     private readonly IDataContext _dataAccess;
-    public UserService(IDataContext dataAccess) => _dataAccess = dataAccess;
+    private readonly IAuditLogService _auditLogService;
+
+    public UserService(IDataContext dataAccess, IAuditLogService auditLogService)
+    {
+        _dataAccess = dataAccess;
+        _auditLogService = auditLogService;
+    }
 
     /// <summary>
     /// Return users by active state
@@ -25,6 +32,7 @@ public class UserService : IUserService
     public void CreateUser(User user)
     {
         _dataAccess.Create(user);
+        _auditLogService.LogCreate(user);
     }
     
     public void UpdateUser(User user)
