@@ -9,4 +9,5 @@ public interface IAuditLogService
     AuditLogEntry? GetAuditLogEntryById(long id);
     void LogCreate(User user);
     void LogUpdate(User before, User after);
+    void LogDelete(User user);
 }

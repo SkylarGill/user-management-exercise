@@ -43,7 +43,7 @@ public class UserService : IUserService
         {
             throw new UserMissingFromDataContextException(user.Id);
         }
-        
+
         _dataAccess.Update(user);
         _auditLogService.LogUpdate(oldUser, user);
     }
@@ -55,5 +55,6 @@ public class UserService : IUserService
     public void DeleteUser(User user)
     {
         _dataAccess.Delete(user);
+        _auditLogService.LogDelete(user);
     }
 }

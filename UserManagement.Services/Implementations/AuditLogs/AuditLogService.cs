@@ -57,4 +57,18 @@ public class AuditLogService : IAuditLogService
         
         _dataContext.Create(logEntry);
     }
+
+    public void LogDelete(User user)
+    {
+        var logEntry = new AuditLogEntry
+        {
+            Action = AuditLogAction.Delete,
+            BeforeSnapshot = new AuditLogSnapshot(user),
+            Time = _currentDateProvider.GetCurrentDateTime(),
+            Message = $"User deleted with ID '{user.Id}'",
+            UserId = user.Id,
+        };
+        
+        _dataContext.Create(logEntry);
+    }
 }
