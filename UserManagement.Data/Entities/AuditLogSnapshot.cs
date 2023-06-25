@@ -29,5 +29,5 @@ public class AuditLogSnapshot
     [EmailAddress]
     public string Email { get; set; } = default!;
     public DateTime DateOfBirth { get; set; } = default!;
-    public bool IsActive { get; set; } 
+    public bool IsActive { get; set; }
 }

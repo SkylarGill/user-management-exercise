@@ -6,4 +6,5 @@ namespace UserManagement.Services.Interfaces.AuditLogs;
 public interface IAuditLogService
 {
     IEnumerable<AuditLogEntry> GetAll();
+    AuditLogEntry? GetAuditLogEntryById(long id);
 }

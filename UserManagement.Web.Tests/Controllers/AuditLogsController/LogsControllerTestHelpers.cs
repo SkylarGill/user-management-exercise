@@ -1,13 +1,13 @@
 using System;
 using UserManagement.Data.Entities;
-using UserManagement.Models.Logs;
+using UserManagement.Models.Logging;
 using UserManagement.Services.Interfaces.AuditLogs;
 
 namespace UserManagement.Web.Tests.Controllers.LogsController;
 
 public static class LogsControllerTestHelpers
 {
-    public static Web.Controllers.LogsController CreateController(Mock<IAuditLogService> auditLogService) =>
+    public static Web.Controllers.AuditLogsController CreateController(Mock<IAuditLogService> auditLogService) =>
         new(auditLogService.Object);
 
     public static AuditLogEntry[] SetupAuditLogEntries(Mock<IAuditLogService> auditLogService)

@@ -1,5 +1,5 @@
 using System.Linq;
-using UserManagement.Models.Logs;
+using UserManagement.Models.Logging;
 using UserManagement.Services.Interfaces.AuditLogs;
 
 namespace UserManagement.Web.Tests.Controllers.LogsController;

@@ -1,0 +1,64 @@
+﻿@using System.Globalization
+@model UserManagement.Models.Logging.LogListViewModel;
+
+@{
+    ViewBag.Title = "Logs";
+}
+
+<h2>Logs</h2>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Action</th>
+                <th>Message</th>
+                <th>Time</th>
+                <th>User Id</th>
+                <th style="width: 1px;"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td>
+                        @item.Id
+                    </td>
+                    <td>
+                        @item.Action.ToString()
+                    </td>
+                    <td>
+                        @item.Message
+                    </td>
+                    <td>
+                        @item.Time.ToString(CultureInfo.InvariantCulture)
+                    </td>
+                    <td>
+                        @item.UserId
+                    </td>
+                    <td>
+                        <div class="dropdown">
+                            <button type="button" class="btn btn-default dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" id="btnToggleActions">
+                                Actions
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="btnToggleActions">
+                                <li><a class="dropdown-item" asp-controller="AuditLogs" asp-action="Details" asp-route-id="@item.Id">View</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div>
+    <div class="btn-group" role="group">
+        <a asp-controller="Users" asp-action="List" class="btn btn-default">Show All</a>
+        <a asp-controller="Users" asp-action="List" asp-route-filterType="Active" class="btn btn-default">Active Only</a>
+        <a asp-controller="Users" asp-action="List" asp-route-filterType="NonActive" class="btn btn-default">Non Active</a>
+    </div>
+</div>
+

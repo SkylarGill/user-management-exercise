@@ -2,7 +2,7 @@
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using UserManagement.Data.Entities;
-using UserManagement.Models.Logs;
+using UserManagement.Models.Logging;
 
 namespace UserManagement.Data;
 
@@ -39,13 +39,15 @@ public class DataContext : DbContext, IDataContext
                 Time = DateTime.Now,
                 Action = AuditLogAction.Create,
                 AfterSnapshotId = i + 1,
-                UserId = u.Id,
+                UserId = u.Id
             });
 
         var auditLogSnapshots = users.Select((u, i) => new AuditLogSnapshot(u, i + 1));
 
-        model.Entity<AuditLogSnapshot>().HasData(auditLogSnapshots);
-        model.Entity<AuditLogEntry>().HasData(auditLogEntries);
+        model.Entity<AuditLogSnapshot>()
+            .HasData(auditLogSnapshots);
+        model.Entity<AuditLogEntry>()
+            .HasData(auditLogEntries);
     }
 
     public DbSet<User>? Users { get; set; }
