@@ -34,16 +34,6 @@ public static class LogsControllerTestHelpers
             },
             new()
             {
-                Id = 3,
-                Action = AuditLogAction.InvalidUpdate,
-                Message = "Message 3",
-                Time = new DateTime(2023, 06, 25, 10, 28, 25),
-                UserId = 2,
-                BeforeSnapshotId = 2,
-                AfterSnapshotId = 3
-            },
-            new()
-            {
                 Id = 4,
                 Action = AuditLogAction.Update,
                 Message = "Message 4",
