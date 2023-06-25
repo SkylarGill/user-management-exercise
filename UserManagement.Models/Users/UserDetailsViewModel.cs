@@ -1,3 +1,5 @@
+using UserManagement.Models.Logging;
+
 namespace UserManagement.Models.Users;
 
 public class UserDetailsViewModel
@@ -13,4 +15,6 @@ public class UserDetailsViewModel
     public DateTime DateOfBirth { get; set; } = default!;
 
     public bool IsActive { get; set; }
+
+    public List<LogListItemViewModel> AuditLogEntries { get; set; } = new();
 }

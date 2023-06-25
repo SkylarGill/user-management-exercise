@@ -6,7 +6,7 @@
 
 <h2>User Details</h2>
 
-<div class="border border-2 p-4 rounded">
+<div class="container border border-2 p-4 rounded mb-3">
     <fieldset disabled>
         
         <div class="form-group mb-3">
@@ -40,3 +40,6 @@
     <button class="btn btn-primary " onclick="location.href='@Url.Action("Edit", new {id = @Model.Id})'">Edit User</button>
     <button class="btn btn-danger ms-2" onclick="location.href='@Url.Action("Delete", new {id = @Model.Id})'">Delete User</button>
 </div>
+
+<h3>Audit Logs</h3>
+<partial name="LogTable" model="Model.AuditLogEntries"/>
