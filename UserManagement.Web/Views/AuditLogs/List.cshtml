@@ -56,9 +56,10 @@
 
 <div>
     <div class="btn-group" role="group">
-        <a asp-controller="Users" asp-action="List" class="btn btn-default">Show All</a>
-        <a asp-controller="Users" asp-action="List" asp-route-filterType="Active" class="btn btn-default">Active Only</a>
-        <a asp-controller="Users" asp-action="List" asp-route-filterType="NonActive" class="btn btn-default">Non Active</a>
+        <a asp-controller="AuditLogs" asp-action="List" class="btn btn-default">Show All</a>
+        <a asp-controller="AuditLogs" asp-action="List" asp-route-filterType="Create" class="btn btn-default">Create Only</a>
+        <a asp-controller="AuditLogs" asp-action="List" asp-route-filterType="Update" class="btn btn-default">Update Only</a>
+        <a asp-controller="AuditLogs" asp-action="List" asp-route-filterType="Delete" class="btn btn-default">Delete Only</a>
     </div>
 </div>
 

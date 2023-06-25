@@ -22,6 +22,10 @@ public class AuditLogService : IAuditLogService
 
     public IEnumerable<AuditLogEntry> GetAll() => _dataContext.GetAll<AuditLogEntry>();
 
+    public IEnumerable<AuditLogEntry> FilterByAction(AuditLogAction filterType) => _dataContext
+        .GetAll<AuditLogEntry>()
+        .Where(entry => entry.Action == filterType);
+
     public AuditLogEntry? GetAuditLogEntryById(long id) =>
         _dataContext
             .GetAll<AuditLogEntry>()
@@ -39,7 +43,7 @@ public class AuditLogService : IAuditLogService
             Message = $"User created with ID '{user.Id}'",
             UserId = user.Id,
         };
-        
+
         _dataContext.Create(logEntry);
     }
 
@@ -54,7 +58,7 @@ public class AuditLogService : IAuditLogService
             Message = $"User updated with ID '{after.Id}'",
             UserId = after.Id,
         };
-        
+
         _dataContext.Create(logEntry);
     }
 
@@ -68,7 +72,7 @@ public class AuditLogService : IAuditLogService
             Message = $"User deleted with ID '{user.Id}'",
             UserId = user.Id,
         };
-        
+
         _dataContext.Create(logEntry);
     }
 }

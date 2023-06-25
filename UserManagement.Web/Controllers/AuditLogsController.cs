@@ -1,4 +1,6 @@
+using System;
 using System.Linq;
+using UserManagement.Data.Entities;
 using UserManagement.Models.Logging;
 using UserManagement.Services.Interfaces.AuditLogs;
 
@@ -15,9 +17,9 @@ public class AuditLogsController : Controller
     }
 
     [HttpGet]
-    public ViewResult List()
+    public ViewResult List(AuditLogActionFilterType filterType = AuditLogActionFilterType.All)
     {
-        var items = _auditLogService.GetAll()
+        var items = GetFilteredAuditLogs(filterType)
             .Select(
                 entry => new LogListItemViewModel
                 {
@@ -84,4 +86,14 @@ public class AuditLogsController : Controller
 
         return View(viewModel);
     }
+    
+    private IEnumerable<AuditLogEntry> GetFilteredAuditLogs(AuditLogActionFilterType filterType) =>
+        filterType switch
+        {
+            AuditLogActionFilterType.All => _auditLogService.GetAll(),
+            AuditLogActionFilterType.Create => _auditLogService.FilterByAction(AuditLogAction.Create),
+            AuditLogActionFilterType.Update => _auditLogService.FilterByAction(AuditLogAction.Update),
+            AuditLogActionFilterType.Delete => _auditLogService.FilterByAction(AuditLogAction.Delete),
+            _ => throw new ArgumentOutOfRangeException(nameof(filterType), filterType, null)
+        };
 }
