@@ -42,4 +42,19 @@ public class AuditLogService : IAuditLogService
         
         _dataContext.Create(logEntry);
     }
+
+    public void LogUpdate(User before, User after)
+    {
+        var logEntry = new AuditLogEntry
+        {
+            Action = AuditLogAction.Update,
+            BeforeSnapshot = new AuditLogSnapshot(before),
+            AfterSnapshot = new AuditLogSnapshot(after),
+            Time = _currentDateProvider.GetCurrentDateTime(),
+            Message = $"User updated with ID '{after.Id}'",
+            UserId = after.Id,
+        };
+        
+        _dataContext.Create(logEntry);
+    }
 }

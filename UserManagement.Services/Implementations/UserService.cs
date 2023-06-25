@@ -1,8 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using UserManagement.Data;
 using UserManagement.Data.Entities;
+using UserManagement.Services.Exceptions;
 using UserManagement.Services.Interfaces;
 using UserManagement.Services.Interfaces.AuditLogs;
 
@@ -37,7 +38,14 @@ public class UserService : IUserService
     
     public void UpdateUser(User user)
     {
+        var oldUser = _dataAccess.GetAll<User>().AsNoTracking().FirstOrDefault(u => u.Id == user.Id);
+        if (oldUser is null)
+        {
+            throw new UserMissingFromDataContextException(user.Id);
+        }
+        
         _dataAccess.Update(user);
+        _auditLogService.LogUpdate(oldUser, user);
     }
 
     public User? GetUserById (long id) =>
