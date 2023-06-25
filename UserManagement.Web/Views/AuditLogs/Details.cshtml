@@ -6,26 +6,27 @@
 
 <h2>Log Details</h2>
 <div class="border border-2 p-4 rounded">
-    <fieldset disabled>
-        <div class="form-group mb-3">
-            <label class="form-label mb-2" asp-for="Id"></label>
-            <input type="text" class="form-control" asp-for="Id">
-        </div>
-        <div class="form-group mb-3">
-            <label class="form-label mb-2" asp-for="Action"></label>
-            <input type="text" class="form-control" asp-for="Action">
-        </div>
-        <div class="form-group mb-3">
-            <label class="form-label mb-2" asp-for="Message"></label>
-            <input type="text" class="form-control" asp-for="Message">
-        </div>
-        <div class="form-group mb-3">
-            <label class="form-label mb-2" for="Time">Time</label>
-            <input type="text" class="form-control" id="dateOfBirth" asp-for="Time" disabled/>
-        </div>
-    </fieldset>
-
     <div class="container">
+        <div class="row align-items-start">
+            <fieldset disabled>
+                    <div class="form-group mb-3">
+                        <label class="form-label mb-2" asp-for="Id"></label>
+                        <input type="text" class="form-control" asp-for="Id">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label class="form-label mb-2" asp-for="Action"></label>
+                        <input type="text" class="form-control" asp-for="Action">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label class="form-label mb-2" asp-for="Message"></label>
+                        <input type="text" class="form-control" asp-for="Message">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label class="form-label mb-2" for="Time">Time</label>
+                        <input type="text" class="form-control" id="dateOfBirth" asp-for="Time" disabled/>
+                    </div>
+                </fieldset>
+        </div>
         <div class="row align-items-start">
             @if (Model.BeforeSnapshot is not null)
             {
