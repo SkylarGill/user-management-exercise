@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using UserManagement.Data.Entities;
 using UserManagement.Models.Users;
 using UserManagement.Services.Interfaces;
+using UserManagement.Services.Interfaces.AuditLogs;
 
 namespace UserManagement.Web.Tests.Controllers.UsersController;
 
@@ -12,7 +13,8 @@ public class UsersControllerSubmitEditTests
 {
     private readonly Mock<IUserService> _userService = new();
     private readonly Mock<IValidator<CreateUserViewModel>> _createUserViewModelValidator = new();
-    private readonly Mock<IValidator<EditUserViewModel>> _editUserViewModelValidator = new();
+    private readonly Mock<IValidator<EditUserViewModel>> _editUserViewModelValidator = new();    
+    private readonly Mock<IAuditLogService> _auditLogService = new();
 
     [Fact]
     public void SubmitEdit_WhenRequestingNonExistingUserId_ReturnsRedirectToActionOfUserNotFound()
@@ -20,6 +22,7 @@ public class UsersControllerSubmitEditTests
         // Arrange
         var controller = UsersControllerTestHelpers.CreateController(
             _userService,
+            _auditLogService,
             _createUserViewModelValidator,
             _editUserViewModelValidator);
         UsersControllerTestHelpers.SetupValidation(
@@ -48,6 +51,7 @@ public class UsersControllerSubmitEditTests
         // Arrange
         var controller = UsersControllerTestHelpers.CreateController(
             _userService,
+            _auditLogService,
             _createUserViewModelValidator,
             _editUserViewModelValidator);
         const string createValidationMessage = "CreateUserViewModel validation failure";
@@ -86,6 +90,7 @@ public class UsersControllerSubmitEditTests
         // Arrange
         var controller = UsersControllerTestHelpers.CreateController(
             _userService,
+            _auditLogService,
             _createUserViewModelValidator,
             _editUserViewModelValidator);
         const string editValidationMessage = "EditUserViewModel validation failure";
@@ -124,6 +129,7 @@ public class UsersControllerSubmitEditTests
         // Arrange
         var controller = UsersControllerTestHelpers.CreateController(
             _userService,
+            _auditLogService,
             _createUserViewModelValidator,
             _editUserViewModelValidator);
         UsersControllerTestHelpers.SetupValidation(_createUserViewModelValidator, _editUserViewModelValidator);

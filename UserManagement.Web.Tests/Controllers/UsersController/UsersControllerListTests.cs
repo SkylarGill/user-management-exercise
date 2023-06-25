@@ -2,6 +2,7 @@ using FluentValidation;
 using UserManagement.Models;
 using UserManagement.Models.Users;
 using UserManagement.Services.Interfaces;
+using UserManagement.Services.Interfaces.AuditLogs;
 
 namespace UserManagement.Web.Tests.Controllers.UsersController;
 
@@ -10,6 +11,7 @@ public class UsersControllerListTests
     private readonly Mock<IUserService> _userService = new();
     private readonly Mock<IValidator<CreateUserViewModel>> _createUserViewModelValidator = new();
     private readonly Mock<IValidator<EditUserViewModel>> _editUserViewModelValidator = new();
+    private readonly Mock<IAuditLogService> _auditLogService = new();
 
     [Fact]
     public void List_WhenServiceReturnsUsers_ModelMustContainUsers()
@@ -17,6 +19,7 @@ public class UsersControllerListTests
         // Arrange: Initializes objects and sets the value of the data that is passed to the method under test.
         var controller = UsersControllerTestHelpers.CreateController(
             _userService,
+            _auditLogService,
             _createUserViewModelValidator,
             _editUserViewModelValidator);
         var users = UsersControllerTestHelpers.SetupUsers(_userService);
@@ -36,6 +39,7 @@ public class UsersControllerListTests
         // Arrange
         var controller = UsersControllerTestHelpers.CreateController(
             _userService,
+            _auditLogService,
             _createUserViewModelValidator,
             _editUserViewModelValidator);
         UsersControllerTestHelpers.SetupUsers(_userService);
@@ -56,6 +60,7 @@ public class UsersControllerListTests
         // Arrange
         var controller = UsersControllerTestHelpers.CreateController(
             _userService,
+            _auditLogService,
             _createUserViewModelValidator,
             _editUserViewModelValidator);
         UsersControllerTestHelpers.SetupUsers(_userService);

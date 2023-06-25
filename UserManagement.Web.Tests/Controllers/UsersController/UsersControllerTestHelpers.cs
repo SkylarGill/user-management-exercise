@@ -6,6 +6,7 @@ using FluentValidation.Results;
 using UserManagement.Data.Entities;
 using UserManagement.Models.Users;
 using UserManagement.Services.Interfaces;
+using UserManagement.Services.Interfaces.AuditLogs;
 
 namespace UserManagement.Web.Tests.Controllers.UsersController;
 
@@ -95,10 +96,12 @@ public static class UsersControllerTestHelpers
 
     public static Web.Controllers.UsersController CreateController(
         Mock<IUserService> userService,
+        Mock<IAuditLogService> auditLogService,
         Mock<IValidator<CreateUserViewModel>> createUserViewModelValidator,
         Mock<IValidator<EditUserViewModel>> editUserViewModelValidator) =>
         new(
             userService.Object,
             createUserViewModelValidator.Object,
-            editUserViewModelValidator.Object);
+            editUserViewModelValidator.Object,
+            auditLogService.Object);
 }

@@ -4,6 +4,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using UserManagement.Models.Users;
 using UserManagement.Services.Interfaces;
+using UserManagement.Services.Interfaces.AuditLogs;
 
 namespace UserManagement.Web.Tests.Controllers.UsersController;
 
@@ -12,6 +13,7 @@ public class UsersControllerEditTests
     private readonly Mock<IUserService> _userService = new();
     private readonly Mock<IValidator<CreateUserViewModel>> _createUserViewModelValidator = new();
     private readonly Mock<IValidator<EditUserViewModel>> _editUserViewModelValidator = new();
+    private readonly Mock<IAuditLogService> _auditLogService = new();
 
     [Fact]
     public void Edit_WhenRequestingNonExistingUserId_ReturnsRedirectToActionOfUserNotFound()
@@ -19,6 +21,7 @@ public class UsersControllerEditTests
         // Arrange
         var controller = UsersControllerTestHelpers.CreateController(
             _userService,
+            _auditLogService,
             _createUserViewModelValidator,
             _editUserViewModelValidator);
         UsersControllerTestHelpers.SetupUsers(_userService);
@@ -44,6 +47,7 @@ public class UsersControllerEditTests
         // Arrange
         var controller = UsersControllerTestHelpers.CreateController(
             _userService,
+            _auditLogService,
             _createUserViewModelValidator,
             _editUserViewModelValidator);
         UsersControllerTestHelpers.SetupValidation(
@@ -77,6 +81,7 @@ public class UsersControllerEditTests
         // Arrange
         var controller = UsersControllerTestHelpers.CreateController(
             _userService,
+            _auditLogService,
             _createUserViewModelValidator,
             _editUserViewModelValidator);
         UsersControllerTestHelpers.SetupValidation(
