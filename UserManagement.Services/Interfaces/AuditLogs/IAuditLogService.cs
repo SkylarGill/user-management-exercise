@@ -8,7 +8,7 @@ namespace UserManagement.Services.Interfaces.AuditLogs;
 public interface IAuditLogService
 {
     Task<IEnumerable<AuditLogEntry>> GetAll();
-    IEnumerable<AuditLogEntry> FilterByAction(AuditLogAction filterType);
+    Task<IEnumerable<AuditLogEntry>> FilterByAction(AuditLogAction filterType);
     IEnumerable<AuditLogEntry> FilterByUserId(long userId);
     AuditLogEntry? GetAuditLogEntryById(long id);
     void LogCreate(User user);

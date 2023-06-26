@@ -94,9 +94,9 @@ public class AuditLogsController : Controller
         filterType switch
         {
             AuditLogActionFilterType.All => await _auditLogService.GetAll(),
-            AuditLogActionFilterType.Create => _auditLogService.FilterByAction(AuditLogAction.Create),
-            AuditLogActionFilterType.Update => _auditLogService.FilterByAction(AuditLogAction.Update),
-            AuditLogActionFilterType.Delete => _auditLogService.FilterByAction(AuditLogAction.Delete),
+            AuditLogActionFilterType.Create => await _auditLogService.FilterByAction(AuditLogAction.Create),
+            AuditLogActionFilterType.Update => await _auditLogService.FilterByAction(AuditLogAction.Update),
+            AuditLogActionFilterType.Delete => await _auditLogService.FilterByAction(AuditLogAction.Delete),
             _ => throw new ArgumentOutOfRangeException(nameof(filterType), filterType, null)
         };
 }

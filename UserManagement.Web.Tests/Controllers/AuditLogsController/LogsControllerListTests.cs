@@ -20,7 +20,7 @@ public class LogsControllerListTests
             entry => new LogListItemViewModel()
             {
                 Action = entry.Action, 
-                Id = entry.Id, 
+                Id = entry.Id,
                 Message = entry.Message, 
                 Time = entry.Time, 
                 UserId = entry.UserId
