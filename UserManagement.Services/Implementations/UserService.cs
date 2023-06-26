@@ -30,12 +30,14 @@ public class UserService : IUserService
         await _dataAccess
             .GetAll<User>()
             .Where(user => user.IsActive == isActive)
+            .OrderBy(user => user.Id)
             .ToListAsync()
             .ConfigureAwait(false);
 
     public async Task<IEnumerable<User>> GetAll() =>
         await _dataAccess
             .GetAll<User>()
+            .OrderBy(user => user.Id)
             .ToListAsync()
             .ConfigureAwait(false);
 

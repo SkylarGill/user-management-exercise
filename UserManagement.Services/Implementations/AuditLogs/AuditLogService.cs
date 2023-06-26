@@ -24,12 +24,14 @@ public class AuditLogService : IAuditLogService
     public async Task<IEnumerable<AuditLogEntry>> GetAll() => 
         await _dataContext
             .GetAll<AuditLogEntry>()
+            .OrderBy(entry => entry.Time)
             .ToListAsync()
             .ConfigureAwait(false);
 
     public async Task<IEnumerable<AuditLogEntry>> FilterByAction(AuditLogAction filterType) =>
         await _dataContext
             .GetAll<AuditLogEntry>()
+            .OrderBy(entry => entry.Time)
             .Where(entry => entry.Action == filterType)
             .ToListAsync()
             .ConfigureAwait(false);
@@ -38,6 +40,7 @@ public class AuditLogService : IAuditLogService
         await _dataContext
             .GetAll<AuditLogEntry>()
             .Where(entry => entry.UserId == userId)
+            .OrderBy(entry => entry.Time)
             .ToListAsync()
             .ConfigureAwait(false);
 
