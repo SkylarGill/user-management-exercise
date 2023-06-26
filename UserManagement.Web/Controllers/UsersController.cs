@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using FluentValidation;
 using UserManagement.Data.Entities;
 using UserManagement.Models;
@@ -92,7 +93,7 @@ public class UsersController : Controller
 
     [HttpGet]
     [Route("{id:long}")]
-    public IActionResult Details ([FromRoute]long id)
+    public async Task<IActionResult> Details ([FromRoute]long id)
     {
         var user = _userService.GetUserById(id);
 
@@ -101,9 +102,10 @@ public class UsersController : Controller
             return RedirectToAction("UserNotFound", new { id = id, });
         }
 
-        var auditLogEntries = 
-            _auditLogService.FilterByUserId(id)
-            .Select(entry => new LogListItemViewModel
+        var auditLogEntries = await _auditLogService.FilterByUserId(id);
+
+        var logListItemViewModels = auditLogEntries.Select(
+            entry => new LogListItemViewModel
             {
                 Id = entry.Id,
                 Action = entry.Action,
@@ -112,7 +114,7 @@ public class UsersController : Controller
                 UserId = entry.UserId,
             });
 
-        var userViewModel = new UserDetailsViewModel()
+        var userViewModel = new UserDetailsViewModel
         {
             Id = user.Id,
             Forename = user.Forename,
@@ -120,7 +122,7 @@ public class UsersController : Controller
             Email = user.Email,
             DateOfBirth = user.DateOfBirth,
             IsActive = user.IsActive,
-            AuditLogEntries = auditLogEntries.ToList()
+            AuditLogEntries = logListItemViewModels.ToList()
         };
         
         return View(userViewModel);

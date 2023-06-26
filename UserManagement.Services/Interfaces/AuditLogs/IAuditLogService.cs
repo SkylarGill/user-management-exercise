@@ -9,7 +9,7 @@ public interface IAuditLogService
 {
     Task<IEnumerable<AuditLogEntry>> GetAll();
     Task<IEnumerable<AuditLogEntry>> FilterByAction(AuditLogAction filterType);
-    IEnumerable<AuditLogEntry> FilterByUserId(long userId);
+    Task<IEnumerable<AuditLogEntry>> FilterByUserId(long userId);
     Task<AuditLogEntry?> GetAuditLogEntryById(long id);
     void LogCreate(User user);
     void LogUpdate(User before, User after);

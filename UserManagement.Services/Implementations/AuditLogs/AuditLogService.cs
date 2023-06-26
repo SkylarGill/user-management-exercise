@@ -29,10 +29,11 @@ public class AuditLogService : IAuditLogService
             .Where(entry => entry.Action == filterType)
             .ToListAsync();
 
-    public IEnumerable<AuditLogEntry> FilterByUserId(long userId) =>
-        _dataContext
+    public async Task<IEnumerable<AuditLogEntry>> FilterByUserId(long userId) =>
+        await _dataContext
             .GetAll<AuditLogEntry>()
-            .Where(entry => entry.UserId == userId);
+            .Where(entry => entry.UserId == userId)
+            .ToListAsync();
 
     public async Task<AuditLogEntry?> GetAuditLogEntryById(long id) =>
         await _dataContext
