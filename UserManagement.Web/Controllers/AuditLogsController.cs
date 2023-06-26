@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using UserManagement.Data.Entities;
 using UserManagement.Models.AuditLogging;
 using UserManagement.Services.Interfaces.AuditLogs;
@@ -17,9 +18,11 @@ public class AuditLogsController : Controller
     }
 
     [HttpGet]
-    public ViewResult List(AuditLogActionFilterType filterType = AuditLogActionFilterType.All)
+    public async Task<ViewResult> List(AuditLogActionFilterType filterType = AuditLogActionFilterType.All)
     {
-        var items = GetFilteredAuditLogs(filterType)
+        var auditLogEntries = await GetFilteredAuditLogs(filterType);
+
+        var items = auditLogEntries
             .Select(
                 entry => new LogListItemViewModel
                 {
@@ -48,7 +51,7 @@ public class AuditLogsController : Controller
         {
             return NotFound();
         }
-        
+
         var beforeSnapshot = auditLogEntry.BeforeSnapshot is null
             ? null
             : new LogSnapshotViewModel()
@@ -60,7 +63,7 @@ public class AuditLogsController : Controller
                 DateOfBirth = auditLogEntry.BeforeSnapshot.DateOfBirth,
                 IsActive = auditLogEntry.BeforeSnapshot.IsActive,
             };
-        
+
         var afterSnapshot = auditLogEntry.AfterSnapshot is null
             ? null
             : new LogSnapshotViewModel
@@ -86,11 +89,11 @@ public class AuditLogsController : Controller
 
         return View(viewModel);
     }
-    
-    private IEnumerable<AuditLogEntry> GetFilteredAuditLogs(AuditLogActionFilterType filterType) =>
+
+    private async Task<IEnumerable<AuditLogEntry>> GetFilteredAuditLogs(AuditLogActionFilterType filterType) =>
         filterType switch
         {
-            AuditLogActionFilterType.All => _auditLogService.GetAll(),
+            AuditLogActionFilterType.All => await _auditLogService.GetAll(),
             AuditLogActionFilterType.Create => _auditLogService.FilterByAction(AuditLogAction.Create),
             AuditLogActionFilterType.Update => _auditLogService.FilterByAction(AuditLogAction.Update),
             AuditLogActionFilterType.Delete => _auditLogService.FilterByAction(AuditLogAction.Delete),

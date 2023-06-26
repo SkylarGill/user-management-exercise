@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using UserManagement.Data;
 using UserManagement.Data.Entities;
@@ -20,11 +21,17 @@ public class AuditLogService : IAuditLogService
         _currentDateProvider = currentDateProvider;
     }
 
-    public IEnumerable<AuditLogEntry> GetAll() => _dataContext.GetAll<AuditLogEntry>();
+    public async Task<IEnumerable<AuditLogEntry>> GetAll() => await _dataContext.GetAll<AuditLogEntry>().ToListAsync();
 
-    public IEnumerable<AuditLogEntry> FilterByAction(AuditLogAction filterType) => _dataContext
-        .GetAll<AuditLogEntry>()
-        .Where(entry => entry.Action == filterType);
+    public IEnumerable<AuditLogEntry> FilterByAction(AuditLogAction filterType) =>
+        _dataContext
+            .GetAll<AuditLogEntry>()
+            .Where(entry => entry.Action == filterType);
+
+    public IEnumerable<AuditLogEntry> FilterByUserId(long userId) =>
+        _dataContext
+            .GetAll<AuditLogEntry>()
+            .Where(entry => entry.UserId == userId);
 
     public AuditLogEntry? GetAuditLogEntryById(long id) =>
         _dataContext

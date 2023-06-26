@@ -1,15 +1,16 @@
 using System.Linq;
+using System.Threading.Tasks;
 using UserManagement.Models.AuditLogging;
 using UserManagement.Services.Interfaces.AuditLogs;
 
-namespace UserManagement.Web.Tests.Controllers.LogsController;
+namespace UserManagement.Web.Tests.Controllers.AuditLogsController;
 
 public class LogsControllerListTests
 {
     private readonly Mock<IAuditLogService> _auditLogService = new();
     
     [Fact]
-    public void List_WhenServiceReturnsAuditLogEntries_ModelMustContainAuditLogs()
+    public async Task List_WhenServiceReturnsAuditLogEntries_ModelMustContainAuditLogs()
     {
         // Arrange
         var controller = LogsControllerTestHelpers.CreateController(
@@ -26,7 +27,7 @@ public class LogsControllerListTests
             });
 
         // Act
-        var result = controller.List();
+        var result = await controller.List();
 
         // Assert
         result.Model

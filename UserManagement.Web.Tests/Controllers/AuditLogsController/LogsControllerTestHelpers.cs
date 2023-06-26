@@ -3,7 +3,7 @@ using UserManagement.Data.Entities;
 using UserManagement.Models.AuditLogging;
 using UserManagement.Services.Interfaces.AuditLogs;
 
-namespace UserManagement.Web.Tests.Controllers.LogsController;
+namespace UserManagement.Web.Tests.Controllers.AuditLogsController;
 
 public static class LogsControllerTestHelpers
 {
@@ -53,7 +53,7 @@ public static class LogsControllerTestHelpers
             },
         };
 
-        auditLogService.Setup(s => s.GetAll()).Returns(auditLogEntries);
+        auditLogService.Setup(s => s.GetAll()).ReturnsAsync(auditLogEntries);
         
         return auditLogEntries;
     }

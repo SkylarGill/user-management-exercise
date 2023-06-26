@@ -101,8 +101,8 @@ public class UsersController : Controller
             return RedirectToAction("UserNotFound", new { id = id, });
         }
 
-        var auditLogEntries = _auditLogService.GetAll()
-            .Where(entry => entry.UserId == id)
+        var auditLogEntries = 
+            _auditLogService.FilterByUserId(id)
             .Select(entry => new LogListItemViewModel
             {
                 Id = entry.Id,

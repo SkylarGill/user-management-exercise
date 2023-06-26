@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UserManagement.Data.Entities;
 using UserManagement.Models.AuditLogging;
 
@@ -6,8 +7,9 @@ namespace UserManagement.Services.Interfaces.AuditLogs;
 
 public interface IAuditLogService
 {
-    IEnumerable<AuditLogEntry> GetAll();
+    Task<IEnumerable<AuditLogEntry>> GetAll();
     IEnumerable<AuditLogEntry> FilterByAction(AuditLogAction filterType);
+    IEnumerable<AuditLogEntry> FilterByUserId(long userId);
     AuditLogEntry? GetAuditLogEntryById(long id);
     void LogCreate(User user);
     void LogUpdate(User before, User after);
