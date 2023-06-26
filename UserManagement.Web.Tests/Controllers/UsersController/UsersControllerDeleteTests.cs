@@ -26,10 +26,9 @@ public class UsersControllerDeleteTests
             _createUserViewModelValidator,
             _editUserViewModelValidator);
         UsersControllerTestHelpers.SetupUsers(_userService);
-        const long userId = 999;
 
         // Act
-        var result = await controller.Delete(userId).ConfigureAwait(false);
+        var result = await controller.Delete(UsersControllerTestHelpers.NonExistentId).ConfigureAwait(false);
 
         // Assert
         result.Should().BeOfType<RedirectToActionResult>()
@@ -38,7 +37,7 @@ public class UsersControllerDeleteTests
         var redirectToActionResult = result as RedirectToActionResult;
         redirectToActionResult?.RouteValues
             .Should().HaveCount(1).And.ContainKey("id")
-            .WhoseValue.Should().BeEquivalentTo(userId);
+            .WhoseValue.Should().BeEquivalentTo(UsersControllerTestHelpers.NonExistentId);
     }
 
     [Fact]

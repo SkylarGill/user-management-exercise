@@ -13,6 +13,8 @@ namespace UserManagement.Web.Tests.Controllers.UsersController;
 
 public static class UsersControllerTestHelpers
 {
+    public const long NonExistentId = 999;
+    
     public static void SetupValidation(
         Mock<IValidator<CreateUserViewModel>> createUserViewModelValidator,
         Mock<IValidator<EditUserViewModel>> editUserViewModelValidator,
@@ -90,7 +92,7 @@ public static class UsersControllerTestHelpers
         userService
             .Setup(s => s.GetUserById(firstUser.Id)).ReturnsAsync(firstUser);
         userService
-            .Setup(s => s.GetUserById(999)).ReturnsAsync(null as User);
+            .Setup(s => s.GetUserById(NonExistentId)).ReturnsAsync(null as User);
 
         return users;
     }

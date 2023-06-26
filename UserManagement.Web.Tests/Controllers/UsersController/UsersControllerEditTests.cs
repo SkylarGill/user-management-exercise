@@ -26,11 +26,10 @@ public class UsersControllerEditTests
             _createUserViewModelValidator,
             _editUserViewModelValidator);
         UsersControllerTestHelpers.SetupUsers(_userService);
-        const long userId = 999;
-        var userViewModel = new EditUserViewModel { Id = userId };
+        var userViewModel = new EditUserViewModel { Id = UsersControllerTestHelpers.NonExistentId };
 
         // Act
-        var result = await controller.Edit(userId, userViewModel).ConfigureAwait(false);
+        var result = await controller.Edit(UsersControllerTestHelpers.NonExistentId, userViewModel).ConfigureAwait(false);
 
         // Assert
         result.Should().BeOfType<RedirectToActionResult>()
@@ -39,7 +38,7 @@ public class UsersControllerEditTests
         var redirectToActionResult = result as RedirectToActionResult;
         redirectToActionResult?.RouteValues
             .Should().HaveCount(1).And.ContainKey("id")
-            .WhoseValue.Should().BeEquivalentTo(userId);
+            .WhoseValue.Should().BeEquivalentTo(UsersControllerTestHelpers.NonExistentId);
     }
 
     [Fact]
