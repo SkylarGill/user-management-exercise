@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using UserManagement.Data.Entities;
 using UserManagement.Models.AuditLogging;
@@ -58,10 +59,10 @@ public class DataContext : DbContext, IDataContext
     public IQueryable<TEntity> GetAll<TEntity>() where TEntity : class
         => base.Set<TEntity>();
 
-    public void Create<TEntity>(TEntity entity) where TEntity : class
+    public async Task Create<TEntity>(TEntity entity) where TEntity : class
     {
-        base.Add(entity);
-        SaveChanges();
+        await base.AddAsync(entity).ConfigureAwait(false);
+        await SaveChangesAsync().ConfigureAwait(false);
     }
 
     public new void Update<TEntity>(TEntity entity) where TEntity : class

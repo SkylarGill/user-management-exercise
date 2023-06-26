@@ -27,7 +27,7 @@ public class LogsControllerListTests
             });
 
         // Act
-        var result = await controller.List();
+        var result = await controller.List().ConfigureAwait(false);
 
         // Assert
         result.Model

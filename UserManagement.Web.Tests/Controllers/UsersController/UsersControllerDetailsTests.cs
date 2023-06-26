@@ -27,7 +27,7 @@ public class UsersControllerDetailsTests
         var user = UsersControllerTestHelpers.SetupUsers(_userService).First();
 
         // Act
-        var result = await controller.Details(user.Id);
+        var result = await controller.Details(user.Id).ConfigureAwait(false);
 
         // Assert
         result.Should().BeOfType<ViewResult>()
@@ -48,7 +48,7 @@ public class UsersControllerDetailsTests
         const long userId = 999;
 
         // Act
-        var result = await controller.Details(userId);
+        var result = await controller.Details(userId).ConfigureAwait(false);
 
         // Assert
         result.Should().BeOfType<RedirectToActionResult>()

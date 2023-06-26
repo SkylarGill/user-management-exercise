@@ -20,7 +20,7 @@ public class AuditLogsController : Controller
     [HttpGet]
     public async Task<ViewResult> List(AuditLogActionFilterType filterType = AuditLogActionFilterType.All)
     {
-        var auditLogEntries = await GetFilteredAuditLogs(filterType);
+        var auditLogEntries = await GetFilteredAuditLogs(filterType).ConfigureAwait(false);
 
         var items = auditLogEntries
             .Select(
@@ -45,7 +45,7 @@ public class AuditLogsController : Controller
     [Route("{id:long}")]
     public async Task<IActionResult> Details([FromRoute] long id)
     {
-        var auditLogEntry = await _auditLogService.GetAuditLogEntryById(id);
+        var auditLogEntry = await _auditLogService.GetAuditLogEntryById(id).ConfigureAwait(false);
 
         if (auditLogEntry is null)
         {
@@ -93,10 +93,10 @@ public class AuditLogsController : Controller
     private async Task<IEnumerable<AuditLogEntry>> GetFilteredAuditLogs(AuditLogActionFilterType filterType) =>
         filterType switch
         {
-            AuditLogActionFilterType.All => await _auditLogService.GetAll(),
-            AuditLogActionFilterType.Create => await _auditLogService.FilterByAction(AuditLogAction.Create),
-            AuditLogActionFilterType.Update => await _auditLogService.FilterByAction(AuditLogAction.Update),
-            AuditLogActionFilterType.Delete => await _auditLogService.FilterByAction(AuditLogAction.Delete),
+            AuditLogActionFilterType.All => await _auditLogService.GetAll().ConfigureAwait(false),
+            AuditLogActionFilterType.Create => await _auditLogService.FilterByAction(AuditLogAction.Create).ConfigureAwait(false),
+            AuditLogActionFilterType.Update => await _auditLogService.FilterByAction(AuditLogAction.Update).ConfigureAwait(false),
+            AuditLogActionFilterType.Delete => await _auditLogService.FilterByAction(AuditLogAction.Delete).ConfigureAwait(false),
             _ => throw new ArgumentOutOfRangeException(nameof(filterType), filterType, null)
         };
 }

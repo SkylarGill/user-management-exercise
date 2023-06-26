@@ -21,28 +21,35 @@ public class AuditLogService : IAuditLogService
         _currentDateProvider = currentDateProvider;
     }
 
-    public async Task<IEnumerable<AuditLogEntry>> GetAll() => await _dataContext.GetAll<AuditLogEntry>().ToListAsync();
+    public async Task<IEnumerable<AuditLogEntry>> GetAll() => 
+        await _dataContext
+            .GetAll<AuditLogEntry>()
+            .ToListAsync()
+            .ConfigureAwait(false);
 
     public async Task<IEnumerable<AuditLogEntry>> FilterByAction(AuditLogAction filterType) =>
         await _dataContext
             .GetAll<AuditLogEntry>()
             .Where(entry => entry.Action == filterType)
-            .ToListAsync();
+            .ToListAsync()
+            .ConfigureAwait(false);
 
     public async Task<IEnumerable<AuditLogEntry>> FilterByUserId(long userId) =>
         await _dataContext
             .GetAll<AuditLogEntry>()
             .Where(entry => entry.UserId == userId)
-            .ToListAsync();
+            .ToListAsync()
+            .ConfigureAwait(false);
 
     public async Task<AuditLogEntry?> GetAuditLogEntryById(long id) =>
         await _dataContext
             .GetAll<AuditLogEntry>()
             .Include(entry => entry.AfterSnapshot)
             .Include(entry => entry.BeforeSnapshot)
-            .FirstOrDefaultAsync(entry => entry.Id == id);
+            .FirstOrDefaultAsync(entry => entry.Id == id)
+            .ConfigureAwait(false);
 
-    public void LogCreate(User user)
+    public async Task LogCreate(User user)
     {
         var logEntry = new AuditLogEntry
         {
@@ -53,7 +60,7 @@ public class AuditLogService : IAuditLogService
             UserId = user.Id,
         };
 
-        _dataContext.Create(logEntry);
+        await _dataContext.Create(logEntry).ConfigureAwait(false);
     }
 
     public void LogUpdate(User before, User after)

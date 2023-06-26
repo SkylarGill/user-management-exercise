@@ -102,7 +102,7 @@ public class UsersController : Controller
             return RedirectToAction("UserNotFound", new { id = id, });
         }
 
-        var auditLogEntries = await _auditLogService.FilterByUserId(id);
+        var auditLogEntries = await _auditLogService.FilterByUserId(id).ConfigureAwait(false);
 
         var logListItemViewModels = auditLogEntries.Select(
             entry => new LogListItemViewModel
