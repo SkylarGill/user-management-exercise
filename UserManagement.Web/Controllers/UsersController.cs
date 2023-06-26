@@ -66,9 +66,9 @@ public class UsersController : Controller
 
     [HttpPost]
     [Route("create")]
-    public IActionResult Create([Bind] CreateUserViewModel createUserViewModel)
+    public async Task<IActionResult> Create([Bind] CreateUserViewModel createUserViewModel)
     {
-        var validationResult = _createUserViewModelValidator.Validate(createUserViewModel);
+        var validationResult = await _createUserViewModelValidator.ValidateAsync(createUserViewModel).ConfigureAwait(false);
 
         if (!validationResult.IsValid)
         {
@@ -90,7 +90,7 @@ public class UsersController : Controller
             DateOfBirth = createUserViewModel.DateOfBirth
         };
 
-        _userService.CreateUser(user);
+        await _userService.CreateUser(user).ConfigureAwait(false);
 
         return RedirectToAction("List");
     }

@@ -23,8 +23,8 @@ public static class UsersControllerTestHelpers
     {
         createUserViewModelValidator
             .Setup(
-                validator => validator.Validate(It.IsAny<CreateUserViewModel>()))
-            .Returns(
+                validator => validator.ValidateAsync(It.IsAny<CreateUserViewModel>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(
                 new ValidationResult(
                     shouldPassValidation
                         ? new List<ValidationFailure>()

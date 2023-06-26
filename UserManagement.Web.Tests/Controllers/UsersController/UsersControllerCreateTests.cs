@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using UserManagement.Data.Entities;
@@ -34,7 +35,7 @@ public class UsersControllerCreateTests
     }
 
     [Fact]
-    public void Create_WhenSubmittingUserWithNoValidationErrors_CallsCreateUserAndRedirectsToListAction()
+    public async Task Create_WhenSubmittingUserWithNoValidationErrors_CallsCreateUserAndRedirectsToListAction()
     {
         // Arrange
         var controller = UsersControllerTestHelpers.CreateController(
@@ -55,7 +56,7 @@ public class UsersControllerCreateTests
         };
 
         // Act
-        var result = controller.Create(viewModel);
+        var result = await controller.Create(viewModel).ConfigureAwait(false);
 
         // Assert
         _userService.Verify(service => service.CreateUser(It.IsAny<User>()), Times.Once);
@@ -64,7 +65,7 @@ public class UsersControllerCreateTests
     }
 
     [Fact]
-    public void Create_WhenSubmittingUserWithValidationErrors_ReturnsViewResult()
+    public async Task Create_WhenSubmittingUserWithValidationErrors_ReturnsViewResult()
     {
         // Arrange
         var controller = UsersControllerTestHelpers.CreateController(
@@ -90,7 +91,7 @@ public class UsersControllerCreateTests
         };
 
         // Act
-        var result = controller.Create(viewModel);
+        var result = await controller.Create(viewModel).ConfigureAwait(false);
 
         // Assert
         _userService.Verify(service => service.CreateUser(It.IsAny<User>()), Times.Never);
@@ -100,7 +101,7 @@ public class UsersControllerCreateTests
     }
 
     [Fact]
-    public void Create_WhenSubmittingUserWithValidationErrors_AddsValidationErrorsToModelState()
+    public async Task Create_WhenSubmittingUserWithValidationErrors_AddsValidationErrorsToModelState()
     {
         // Arrange
         var controller = UsersControllerTestHelpers.CreateController(
@@ -127,7 +128,7 @@ public class UsersControllerCreateTests
         };
 
         // Act
-        controller.Create(viewModel);
+        await controller.Create(viewModel).ConfigureAwait(false);
 
         // Assert
         controller.ModelState
