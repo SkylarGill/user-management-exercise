@@ -58,9 +58,9 @@ public class UserService : IUserService
         _dataAccess.GetAll<User>()
             .FirstOrDefault(user => user.Id == id);
 
-    public void DeleteUser(User user)
+    public async Task DeleteUser(User user)
     {
-        _dataAccess.Delete(user);
-        _auditLogService.LogDelete(user);
+        await _dataAccess.Delete(user).ConfigureAwait(false);
+        await _auditLogService.LogDelete(user).ConfigureAwait(false);
     }
 }

@@ -196,7 +196,7 @@ public class UsersController : Controller
     
     [HttpGet]
     [Route("delete/{id:long}")]
-    public IActionResult Delete(long id)
+    public async Task<IActionResult> Delete(long id)
     {
         var user = _userService.GetUserById(id);
 
@@ -205,7 +205,7 @@ public class UsersController : Controller
             return RedirectToAction("UserNotFound", new { id = id });
         }
         
-        _userService.DeleteUser(user);
+        await _userService.DeleteUser(user).ConfigureAwait(false);
 
         return RedirectToAction("List");
     }

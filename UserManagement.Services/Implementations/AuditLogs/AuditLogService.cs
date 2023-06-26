@@ -78,7 +78,7 @@ public class AuditLogService : IAuditLogService
         await _dataContext.Create(logEntry).ConfigureAwait(false);
     }
 
-    public void LogDelete(User user)
+    public async Task LogDelete(User user)
     {
         var logEntry = new AuditLogEntry
         {
@@ -89,6 +89,6 @@ public class AuditLogService : IAuditLogService
             UserId = user.Id,
         };
 
-        _dataContext.Create(logEntry);
+        await _dataContext.Create(logEntry).ConfigureAwait(false);
     }
 }

@@ -71,9 +71,9 @@ public class DataContext : DbContext, IDataContext
         await SaveChangesAsync().ConfigureAwait(false);
     }
 
-    public void Delete<TEntity>(TEntity entity) where TEntity : class
+    public async Task Delete<TEntity>(TEntity entity) where TEntity : class
     {
         base.Remove(entity);
-        SaveChanges();
+        await SaveChangesAsync().ConfigureAwait(false);
     }
 }

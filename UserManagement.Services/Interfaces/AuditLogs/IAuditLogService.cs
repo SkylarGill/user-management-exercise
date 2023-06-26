@@ -13,5 +13,5 @@ public interface IAuditLogService
     Task<AuditLogEntry?> GetAuditLogEntryById(long id);
     Task LogCreate(User user);
     Task LogUpdate(User before, User after);
-    void LogDelete(User user);
+    Task LogDelete(User user);
 }

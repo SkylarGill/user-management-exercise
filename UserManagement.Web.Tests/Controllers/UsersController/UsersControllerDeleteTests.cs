@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Threading.Tasks;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using UserManagement.Models.Users;
@@ -16,7 +17,7 @@ public class UsersControllerDeleteTests
 
 
     [Fact]
-    public void Delete_WhenDeletingNonExistingUserId_ReturnsRedirectToActionOfUserNotFound()
+    public async Task Delete_WhenDeletingNonExistingUserId_ReturnsRedirectToActionOfUserNotFound()
     {
         // Arrange
         var controller = UsersControllerTestHelpers.CreateController(
@@ -28,7 +29,7 @@ public class UsersControllerDeleteTests
         const long userId = 999;
 
         // Act
-        var result = controller.Delete(userId);
+        var result = await controller.Delete(userId).ConfigureAwait(false);
 
         // Assert
         result.Should().BeOfType<RedirectToActionResult>()
@@ -41,7 +42,7 @@ public class UsersControllerDeleteTests
     }
 
     [Fact]
-    public void Delete_WhenDeletingExistingUserId_ReturnsCallsDeleteAndReturnsRedirectToActionOfList()
+    public async Task Delete_WhenDeletingExistingUserId_ReturnsCallsDeleteAndReturnsRedirectToActionOfList()
     {
         // Arrange
         var controller = UsersControllerTestHelpers.CreateController(
@@ -52,7 +53,7 @@ public class UsersControllerDeleteTests
         var user = UsersControllerTestHelpers.SetupUsers(_userService).First();
 
         // Act
-        var result = controller.Delete(user.Id);
+        var result = await controller.Delete(user.Id).ConfigureAwait(false);
 
         // Assert
         _userService.Verify(service => service.DeleteUser(user), Times.Once);

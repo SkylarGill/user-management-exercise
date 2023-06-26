@@ -28,6 +28,6 @@ public interface IDataContext
     /// <returns></returns>
     Task UpdateAsync<TEntity>(TEntity entity) where TEntity : class;
 
-    void Delete<TEntity>(TEntity entity) where TEntity : class;
+    Task Delete<TEntity>(TEntity entity) where TEntity : class;
     
 }
