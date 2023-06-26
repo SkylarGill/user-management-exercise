@@ -34,12 +34,12 @@ public class AuditLogService : IAuditLogService
             .GetAll<AuditLogEntry>()
             .Where(entry => entry.UserId == userId);
 
-    public AuditLogEntry? GetAuditLogEntryById(long id) =>
-        _dataContext
+    public async Task<AuditLogEntry?> GetAuditLogEntryById(long id) =>
+        await _dataContext
             .GetAll<AuditLogEntry>()
             .Include(entry => entry.AfterSnapshot)
             .Include(entry => entry.BeforeSnapshot)
-            .FirstOrDefault(entry => entry.Id == id);
+            .FirstOrDefaultAsync(entry => entry.Id == id);
 
     public void LogCreate(User user)
     {

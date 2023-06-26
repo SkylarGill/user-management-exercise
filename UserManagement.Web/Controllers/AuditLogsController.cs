@@ -43,9 +43,9 @@ public class AuditLogsController : Controller
 
     [HttpGet]
     [Route("{id:long}")]
-    public IActionResult Details([FromRoute] long id)
+    public async Task<IActionResult> Details([FromRoute] long id)
     {
-        var auditLogEntry = _auditLogService.GetAuditLogEntryById(id);
+        var auditLogEntry = await _auditLogService.GetAuditLogEntryById(id);
 
         if (auditLogEntry is null)
         {
