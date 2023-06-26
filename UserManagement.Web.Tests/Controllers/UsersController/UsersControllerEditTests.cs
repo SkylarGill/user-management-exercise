@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using UserManagement.Models.Users;
@@ -16,7 +17,7 @@ public class UsersControllerEditTests
     private readonly Mock<IAuditLogService> _auditLogService = new();
 
     [Fact]
-    public void Edit_WhenRequestingNonExistingUserId_ReturnsRedirectToActionOfUserNotFound()
+    public async Task Edit_WhenRequestingNonExistingUserId_ReturnsRedirectToActionOfUserNotFound()
     {
         // Arrange
         var controller = UsersControllerTestHelpers.CreateController(
@@ -29,7 +30,7 @@ public class UsersControllerEditTests
         var userViewModel = new EditUserViewModel { Id = userId };
 
         // Act
-        var result = controller.Edit(userId, userViewModel);
+        var result = await controller.Edit(userId, userViewModel).ConfigureAwait(false);
 
         // Assert
         result.Should().BeOfType<RedirectToActionResult>()
@@ -42,7 +43,7 @@ public class UsersControllerEditTests
     }
 
     [Fact]
-    public void Edit_WhenRequestingWithHasValidationErrorsValueOfFalse_ReturnsViewResultWithEditUserModel()
+    public async Task Edit_WhenRequestingWithHasValidationErrorsValueOfFalse_ReturnsViewResultWithEditUserModel()
     {
         // Arrange
         var controller = UsersControllerTestHelpers.CreateController(
@@ -67,7 +68,7 @@ public class UsersControllerEditTests
         };
 
         // Act
-        var result = controller.Edit(user.Id, viewModel);
+        var result = await controller.Edit(user.Id, viewModel).ConfigureAwait(false);
 
         // Assert
         result.Should().BeOfType<ViewResult>()
@@ -76,7 +77,7 @@ public class UsersControllerEditTests
     }
 
     [Fact]
-    public void Edit_WhenRequestingWithHasValidationErrorsValueOfTrue_ReturnsViewResultWithProvidedEditUserViewModel()
+    public async Task Edit_WhenRequestingWithHasValidationErrorsValueOfTrue_ReturnsViewResultWithProvidedEditUserViewModel()
     {
         // Arrange
         var controller = UsersControllerTestHelpers.CreateController(
@@ -101,7 +102,7 @@ public class UsersControllerEditTests
         };
 
         // Act
-        var result = controller.Edit(viewModel.Id, viewModel);
+        var result = await controller.Edit(viewModel.Id, viewModel).ConfigureAwait(false);
 
         // Assert
         _userService.Verify(service => service.GetUserById(viewModel.Id), Times.Never);

@@ -88,9 +88,9 @@ public static class UsersControllerTestHelpers
         var firstUser = users.First();
 
         userService
-            .Setup(s => s.GetUserById(firstUser.Id)).Returns(firstUser);
+            .Setup(s => s.GetUserById(firstUser.Id)).ReturnsAsync(firstUser);
         userService
-            .Setup(s => s.GetUserById(999)).Returns(null as User);
+            .Setup(s => s.GetUserById(999)).ReturnsAsync(null as User);
 
         return users;
     }

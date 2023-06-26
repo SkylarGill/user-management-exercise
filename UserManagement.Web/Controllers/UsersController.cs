@@ -99,7 +99,7 @@ public class UsersController : Controller
     [Route("{id:long}")]
     public async Task<IActionResult> Details([FromRoute] long id)
     {
-        var user = _userService.GetUserById(id);
+        var user = await _userService.GetUserById(id).ConfigureAwait(false);
 
         if (user is null)
         {
@@ -134,14 +134,14 @@ public class UsersController : Controller
 
     [HttpGet]
     [Route("edit/{id:long}")]
-    public IActionResult Edit([FromRoute] long id, EditUserViewModel editUserViewModel)
+    public async Task<IActionResult> Edit([FromRoute] long id, EditUserViewModel editUserViewModel)
     {
         if (editUserViewModel.HasValidationErrors)
         {
             return View(editUserViewModel);
         }
 
-        var user = _userService.GetUserById(id);
+        var user = await _userService.GetUserById(id).ConfigureAwait(false);
 
         if (user is null)
         {
@@ -180,7 +180,7 @@ public class UsersController : Controller
             return View("Edit", editUserViewModel);
         }
 
-        var user = _userService.GetUserById(editUserViewModel.Id);
+        var user = await _userService.GetUserById(editUserViewModel.Id).ConfigureAwait(false);
         if (user is null)
         {
             return RedirectToAction("UserNotFound", new { id = id });
@@ -202,7 +202,7 @@ public class UsersController : Controller
     [Route("delete/{id:long}")]
     public async Task<IActionResult> Delete(long id)
     {
-        var user = _userService.GetUserById(id);
+        var user = await _userService.GetUserById(id).ConfigureAwait(false);
 
         if (user is null)
         {

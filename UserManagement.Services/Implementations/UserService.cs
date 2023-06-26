@@ -62,9 +62,11 @@ public class UserService : IUserService
         await _auditLogService.LogUpdate(oldUser, user).ConfigureAwait(false);
     }
 
-    public User? GetUserById(long id) =>
-        _dataAccess.GetAll<User>()
-            .FirstOrDefault(user => user.Id == id);
+    public async Task<User?> GetUserById(long id) =>
+        await _dataAccess
+            .GetAll<User>()
+            .FirstOrDefaultAsync(user => user.Id == id)
+            .ConfigureAwait(false);
 
     public async Task DeleteUser(User user)
     {
