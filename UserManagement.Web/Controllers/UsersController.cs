@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using FluentValidation;
 using UserManagement.Data.Entities;
 using UserManagement.Models;
-using UserManagement.Models.Logging;
+using UserManagement.Models.AuditLogging;
 using UserManagement.Models.Users;
 using UserManagement.Services.Interfaces;
 using UserManagement.Services.Interfaces.AuditLogs;
@@ -19,8 +20,8 @@ public class UsersController : Controller
     private readonly IAuditLogService _auditLogService;
 
     public UsersController(
-        IUserService userService, 
-        IValidator<CreateUserViewModel> createUserViewModelValidator, 
+        IUserService userService,
+        IValidator<CreateUserViewModel> createUserViewModelValidator,
         IValidator<EditUserViewModel> editUserViewModelValidator,
         IAuditLogService auditLogService)
     {
@@ -32,18 +33,21 @@ public class UsersController : Controller
 
 
     [HttpGet]
-    public ViewResult List(FilterType filterType = FilterType.All)
+    public async Task<ViewResult> List(FilterType filterType = FilterType.All)
     {
-        var items = GetFilteredUsers(filterType)
-            .Select(p => new UserListItemViewModel
-            {
-                Id = p.Id,
-                Forename = p.Forename,
-                Surname = p.Surname,
-                Email = p.Email,
-                IsActive = p.IsActive,
-                DateOfBirth = p.DateOfBirth
-            });
+        var users = await GetFilteredUsers(filterType).ConfigureAwait(false);
+
+        var items = users
+            .Select(
+                p => new UserListItemViewModel
+                {
+                    Id = p.Id,
+                    Forename = p.Forename,
+                    Surname = p.Surname,
+                    Email = p.Email,
+                    IsActive = p.IsActive,
+                    DateOfBirth = p.DateOfBirth
+                });
 
         var model = new UserListViewModel
         {
@@ -59,20 +63,21 @@ public class UsersController : Controller
     {
         return View();
     }
-    
+
     [HttpPost]
     [Route("create")]
-    public IActionResult Create([Bind] CreateUserViewModel createUserViewModel)
+    public async Task<IActionResult> Create([Bind] CreateUserViewModel createUserViewModel)
     {
-        var validationResult = _createUserViewModelValidator.Validate(createUserViewModel);
+        var validationResult = await _createUserViewModelValidator.ValidateAsync(createUserViewModel).ConfigureAwait(false);
 
         if (!validationResult.IsValid)
         {
             ModelState.Clear();
             foreach (var error in validationResult.Errors)
             {
-                ModelState.AddModelError(error.PropertyName, error.ErrorMessage);   
-            }   
+                ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+            }
+
             return View(createUserViewModel);
         }
 
@@ -84,26 +89,27 @@ public class UsersController : Controller
             IsActive = createUserViewModel.IsActive,
             DateOfBirth = createUserViewModel.DateOfBirth
         };
-        
-        _userService.CreateUser(user);
+
+        await _userService.CreateUser(user).ConfigureAwait(false);
 
         return RedirectToAction("List");
     }
 
     [HttpGet]
     [Route("{id:long}")]
-    public IActionResult Details ([FromRoute]long id)
+    public async Task<IActionResult> Details([FromRoute] long id)
     {
-        var user = _userService.GetUserById(id);
+        var user = await _userService.GetUserById(id).ConfigureAwait(false);
 
         if (user is null)
         {
             return RedirectToAction("UserNotFound", new { id = id, });
         }
 
-        var auditLogEntries = _auditLogService.GetAll()
-            .Where(entry => entry.UserId == id)
-            .Select(entry => new LogListItemViewModel
+        var auditLogEntries = await _auditLogService.FilterByUserId(id).ConfigureAwait(false);
+
+        var logListItemViewModels = auditLogEntries.Select(
+            entry => new LogListItemViewModel
             {
                 Id = entry.Id,
                 Action = entry.Action,
@@ -112,7 +118,7 @@ public class UsersController : Controller
                 UserId = entry.UserId,
             });
 
-        var userViewModel = new UserDetailsViewModel()
+        var userViewModel = new UserDetailsViewModel
         {
             Id = user.Id,
             Forename = user.Forename,
@@ -120,22 +126,22 @@ public class UsersController : Controller
             Email = user.Email,
             DateOfBirth = user.DateOfBirth,
             IsActive = user.IsActive,
-            AuditLogEntries = auditLogEntries.ToList()
+            AuditLogEntries = logListItemViewModels.ToList()
         };
-        
+
         return View(userViewModel);
     }
 
     [HttpGet]
     [Route("edit/{id:long}")]
-    public IActionResult Edit([FromRoute] long id, EditUserViewModel editUserViewModel)
+    public async Task<IActionResult> Edit([FromRoute] long id, EditUserViewModel editUserViewModel)
     {
         if (editUserViewModel.HasValidationErrors)
         {
             return View(editUserViewModel);
         }
-        
-        var user = _userService.GetUserById(id);
+
+        var user = await _userService.GetUserById(id).ConfigureAwait(false);
 
         if (user is null)
         {
@@ -158,23 +164,23 @@ public class UsersController : Controller
 
     [HttpPost]
     [Route("edit/{id:long}")]
-    public IActionResult SubmitEdit(long id, EditUserViewModel editUserViewModel)
+    public async Task<IActionResult> SubmitEdit(long id, EditUserViewModel editUserViewModel)
     {
-        var validationResult = _editUserViewModelValidator.Validate(editUserViewModel);
+        var validationResult = await _editUserViewModelValidator.ValidateAsync(editUserViewModel).ConfigureAwait(false);
 
         if (!validationResult.IsValid)
         {
             ModelState.Clear();
             foreach (var error in validationResult.Errors)
             {
-                ModelState.AddModelError(error.PropertyName, error.ErrorMessage);   
-            }   
-            
+                ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+            }
+
             editUserViewModel.HasValidationErrors = true;
             return View("Edit", editUserViewModel);
         }
 
-        var user = _userService.GetUserById(editUserViewModel.Id);
+        var user = await _userService.GetUserById(editUserViewModel.Id).ConfigureAwait(false);
         if (user is null)
         {
             return RedirectToAction("UserNotFound", new { id = id });
@@ -186,28 +192,28 @@ public class UsersController : Controller
         user.IsActive = editUserViewModel.IsActive;
         user.DateOfBirth = editUserViewModel.DateOfBirth;
 
-        _userService.UpdateUser(user);
+        await _userService.UpdateUser(user).ConfigureAwait(false);
 
         return RedirectToAction("List");
     }
 
-    
+
     [HttpGet]
     [Route("delete/{id:long}")]
-    public IActionResult Delete(long id)
+    public async Task<IActionResult> Delete(long id)
     {
-        var user = _userService.GetUserById(id);
+        var user = await _userService.GetUserById(id).ConfigureAwait(false);
 
         if (user is null)
         {
             return RedirectToAction("UserNotFound", new { id = id });
         }
-        
-        _userService.DeleteUser(user);
+
+        await _userService.DeleteUser(user).ConfigureAwait(false);
 
         return RedirectToAction("List");
     }
-    
+
 
     [HttpGet]
     [Route("notfound/{id:long}")]
@@ -215,15 +221,14 @@ public class UsersController : Controller
     {
         return View(new UserNotFoundViewModel(id));
     }
-    
 
-    private IEnumerable<User> GetFilteredUsers(FilterType filterType) =>
+
+    private async Task<IEnumerable<User>> GetFilteredUsers(FilterType filterType) =>
         filterType switch
         {
-            FilterType.All => _userService.GetAll(),
-            FilterType.Active => _userService.FilterByActive(true),
-            FilterType.NonActive => _userService.FilterByActive(false),
+            FilterType.All => await _userService.GetAll().ConfigureAwait(false),
+            FilterType.Active => await _userService.FilterByActive(true).ConfigureAwait(false),
+            FilterType.NonActive => await _userService.FilterByActive(false).ConfigureAwait(false),
             _ => throw new ArgumentOutOfRangeException(nameof(filterType), filterType, null)
         };
 }
-

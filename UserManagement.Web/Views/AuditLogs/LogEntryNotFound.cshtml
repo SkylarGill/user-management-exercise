@@ -1,0 +1,11 @@
+@model UserManagement.Models.AuditLogging.LogEntryNotFoundViewModel
+
+@{
+    ViewBag.Title = "404 - Log Entry Not Found";
+}
+
+<h1>404 - Log Entry Not Found</h1>
+
+<p class="text-danger">No Log Entry found with ID '@Model.Id'.</p>
+
+<button class="btn btn-outline-primary" onclick="location.href='@Url.Action("List")'">Return to Logs</button>

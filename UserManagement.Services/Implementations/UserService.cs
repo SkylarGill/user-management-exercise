@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using UserManagement.Data;
 using UserManagement.Data.Entities;
@@ -25,36 +26,53 @@ public class UserService : IUserService
     /// </summary>
     /// <param name="isActive"></param>
     /// <returns></returns>
-    public IEnumerable<User> FilterByActive(bool isActive) =>
-        _dataAccess.GetAll<User>()
-            .Where(user => user.IsActive == isActive);
+    public async Task<IEnumerable<User>> FilterByActive(bool isActive) =>
+        await _dataAccess
+            .GetAll<User>()
+            .Where(user => user.IsActive == isActive)
+            .OrderBy(user => user.Id)
+            .ToListAsync()
+            .ConfigureAwait(false);
 
-    public IEnumerable<User> GetAll() => _dataAccess.GetAll<User>();
-    public void CreateUser(User user)
+    public async Task<IEnumerable<User>> GetAll() =>
+        await _dataAccess
+            .GetAll<User>()
+            .OrderBy(user => user.Id)
+            .ToListAsync()
+            .ConfigureAwait(false);
+
+    public async Task CreateUser(User user)
     {
-        _dataAccess.Create(user);
-        _auditLogService.LogCreate(user);
+        await _dataAccess.Create(user).ConfigureAwait(false);
+        await _auditLogService.LogCreate(user).ConfigureAwait(false);
     }
-    
-    public void UpdateUser(User user)
+
+    public async Task UpdateUser(User user)
     {
-        var oldUser = _dataAccess.GetAll<User>().AsNoTracking().FirstOrDefault(u => u.Id == user.Id);
+        var oldUser = await _dataAccess
+            .GetAll<User>()
+            .AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Id == user.Id)
+            .ConfigureAwait(false);
+
         if (oldUser is null)
         {
             throw new UserMissingFromDataContextException(user.Id);
         }
 
-        _dataAccess.Update(user);
-        _auditLogService.LogUpdate(oldUser, user);
+        await _dataAccess.UpdateAsync(user).ConfigureAwait(false);
+        await _auditLogService.LogUpdate(oldUser, user).ConfigureAwait(false);
     }
 
-    public User? GetUserById (long id) =>
-        _dataAccess.GetAll<User>()
-            .FirstOrDefault(user => user.Id == id);
+    public async Task<User?> GetUserById(long id) =>
+        await _dataAccess
+            .GetAll<User>()
+            .FirstOrDefaultAsync(user => user.Id == id)
+            .ConfigureAwait(false);
 
-    public void DeleteUser(User user)
+    public async Task DeleteUser(User user)
     {
-        _dataAccess.Delete(user);
-        _auditLogService.LogDelete(user);
+        await _dataAccess.Delete(user).ConfigureAwait(false);
+        await _auditLogService.LogDelete(user).ConfigureAwait(false);
     }
 }

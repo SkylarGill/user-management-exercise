@@ -1,6 +1,6 @@
-namespace UserManagement.Models.Logging;
+namespace UserManagement.Models.AuditLogging;
 
-public class LogDetailsViewModel
+public class LogListItemViewModel
 {
     public long Id { get; set; }
 
@@ -9,9 +9,6 @@ public class LogDetailsViewModel
     public AuditLogAction Action { get; set; }
 
     public long UserId { get; set; }
-
-    public LogSnapshotViewModel? BeforeSnapshot { get; set; }
-    public LogSnapshotViewModel? AfterSnapshot { get; set; }
 
     public string? Message { get; set; }
 }

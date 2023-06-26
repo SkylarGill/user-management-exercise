@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using UserManagement.Data.Entities;
-using UserManagement.Models.Logging;
+using UserManagement.Models.AuditLogging;
 
 namespace UserManagement.Data;
 
@@ -58,21 +59,21 @@ public class DataContext : DbContext, IDataContext
     public IQueryable<TEntity> GetAll<TEntity>() where TEntity : class
         => base.Set<TEntity>();
 
-    public void Create<TEntity>(TEntity entity) where TEntity : class
+    public async Task Create<TEntity>(TEntity entity) where TEntity : class
     {
-        base.Add(entity);
-        SaveChanges();
+        await base.AddAsync(entity).ConfigureAwait(false);
+        await SaveChangesAsync().ConfigureAwait(false);
     }
 
-    public new void Update<TEntity>(TEntity entity) where TEntity : class
+    public async Task UpdateAsync<TEntity>(TEntity entity) where TEntity : class
     {
         base.Update(entity);
-        SaveChanges();
+        await SaveChangesAsync().ConfigureAwait(false);
     }
 
-    public void Delete<TEntity>(TEntity entity) where TEntity : class
+    public async Task Delete<TEntity>(TEntity entity) where TEntity : class
     {
         base.Remove(entity);
-        SaveChanges();
+        await SaveChangesAsync().ConfigureAwait(false);
     }
 }

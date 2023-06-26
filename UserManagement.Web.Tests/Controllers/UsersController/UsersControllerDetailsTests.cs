@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Threading.Tasks;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using UserManagement.Models.Users;
@@ -15,7 +16,7 @@ public class UsersControllerDetailsTests
     private readonly Mock<IAuditLogService> _auditLogService = new();
 
     [Fact]
-    public void Details_WhenRequestingExistingUserId_ReturnsViewModelWithCorrectParameters()
+    public async Task Details_WhenRequestingExistingUserId_ReturnsViewModelWithCorrectParameters()
     {
         // Arrange
         var controller = UsersControllerTestHelpers.CreateController(
@@ -26,7 +27,7 @@ public class UsersControllerDetailsTests
         var user = UsersControllerTestHelpers.SetupUsers(_userService).First();
 
         // Act
-        var result = controller.Details(user.Id);
+        var result = await controller.Details(user.Id).ConfigureAwait(false);
 
         // Assert
         result.Should().BeOfType<ViewResult>()
@@ -35,7 +36,7 @@ public class UsersControllerDetailsTests
     }
 
     [Fact]
-    public void Details_WhenRequestingNonExistingUserId_ReturnsRedirectToActionOfUserNotFound()
+    public async Task Details_WhenRequestingNonExistingUserId_ReturnsRedirectToActionOfUserNotFound()
     {
         // Arrange
         var controller = UsersControllerTestHelpers.CreateController(
@@ -44,10 +45,9 @@ public class UsersControllerDetailsTests
             _createUserViewModelValidator,
             _editUserViewModelValidator);
         UsersControllerTestHelpers.SetupUsers(_userService);
-        const long userId = 999;
 
         // Act
-        var result = controller.Details(userId);
+        var result = await controller.Details(UsersControllerTestHelpers.NonExistentId).ConfigureAwait(false);
 
         // Assert
         result.Should().BeOfType<RedirectToActionResult>()
@@ -56,6 +56,6 @@ public class UsersControllerDetailsTests
         var redirectToActionResult = result as RedirectToActionResult;
         redirectToActionResult?.RouteValues
             .Should().HaveCount(1).And.ContainKey("id")
-            .WhoseValue.Should().BeEquivalentTo(userId);
+            .WhoseValue.Should().BeEquivalentTo(UsersControllerTestHelpers.NonExistentId);
     }
 }

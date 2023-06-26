@@ -1,7 +1,8 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using UserManagement.Data.Entities;
-using UserManagement.Models.Logging;
+using UserManagement.Models.AuditLogging;
 using UserManagement.Services.Interfaces.AuditLogs;
 
 namespace UserManagement.Web.Controllers;
@@ -17,9 +18,11 @@ public class AuditLogsController : Controller
     }
 
     [HttpGet]
-    public ViewResult List(AuditLogActionFilterType filterType = AuditLogActionFilterType.All)
+    public async Task<ViewResult> List(AuditLogActionFilterType filterType = AuditLogActionFilterType.All)
     {
-        var items = GetFilteredAuditLogs(filterType)
+        var auditLogEntries = await GetFilteredAuditLogs(filterType).ConfigureAwait(false);
+
+        var items = auditLogEntries
             .Select(
                 entry => new LogListItemViewModel
                 {
@@ -40,15 +43,15 @@ public class AuditLogsController : Controller
 
     [HttpGet]
     [Route("{id:long}")]
-    public IActionResult Details([FromRoute] long id)
+    public async Task<IActionResult> Details([FromRoute] long id)
     {
-        var auditLogEntry = _auditLogService.GetAuditLogEntryById(id);
+        var auditLogEntry = await _auditLogService.GetAuditLogEntryById(id).ConfigureAwait(false);
 
         if (auditLogEntry is null)
         {
-            return NotFound();
+            return RedirectToAction("LogEntryNotFound", new { id = id });
         }
-        
+
         var beforeSnapshot = auditLogEntry.BeforeSnapshot is null
             ? null
             : new LogSnapshotViewModel()
@@ -60,7 +63,7 @@ public class AuditLogsController : Controller
                 DateOfBirth = auditLogEntry.BeforeSnapshot.DateOfBirth,
                 IsActive = auditLogEntry.BeforeSnapshot.IsActive,
             };
-        
+
         var afterSnapshot = auditLogEntry.AfterSnapshot is null
             ? null
             : new LogSnapshotViewModel
@@ -87,13 +90,20 @@ public class AuditLogsController : Controller
         return View(viewModel);
     }
     
-    private IEnumerable<AuditLogEntry> GetFilteredAuditLogs(AuditLogActionFilterType filterType) =>
+    [HttpGet]
+    [Route("notfound/{id:long}")]
+    public IActionResult LogEntryNotFound([FromRoute] long id)
+    {
+        return View(new LogEntryNotFoundViewModel(id));
+    }
+
+    private async Task<IEnumerable<AuditLogEntry>> GetFilteredAuditLogs(AuditLogActionFilterType filterType) =>
         filterType switch
         {
-            AuditLogActionFilterType.All => _auditLogService.GetAll(),
-            AuditLogActionFilterType.Create => _auditLogService.FilterByAction(AuditLogAction.Create),
-            AuditLogActionFilterType.Update => _auditLogService.FilterByAction(AuditLogAction.Update),
-            AuditLogActionFilterType.Delete => _auditLogService.FilterByAction(AuditLogAction.Delete),
+            AuditLogActionFilterType.All => await _auditLogService.GetAll().ConfigureAwait(false),
+            AuditLogActionFilterType.Create => await _auditLogService.FilterByAction(AuditLogAction.Create).ConfigureAwait(false),
+            AuditLogActionFilterType.Update => await _auditLogService.FilterByAction(AuditLogAction.Update).ConfigureAwait(false),
+            AuditLogActionFilterType.Delete => await _auditLogService.FilterByAction(AuditLogAction.Delete).ConfigureAwait(false),
             _ => throw new ArgumentOutOfRangeException(nameof(filterType), filterType, null)
         };
 }

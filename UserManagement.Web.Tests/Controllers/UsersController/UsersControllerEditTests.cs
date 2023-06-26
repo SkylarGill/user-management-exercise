@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using UserManagement.Models.Users;
@@ -16,7 +17,7 @@ public class UsersControllerEditTests
     private readonly Mock<IAuditLogService> _auditLogService = new();
 
     [Fact]
-    public void Edit_WhenRequestingNonExistingUserId_ReturnsRedirectToActionOfUserNotFound()
+    public async Task Edit_WhenRequestingNonExistingUserId_ReturnsRedirectToActionOfUserNotFound()
     {
         // Arrange
         var controller = UsersControllerTestHelpers.CreateController(
@@ -25,11 +26,10 @@ public class UsersControllerEditTests
             _createUserViewModelValidator,
             _editUserViewModelValidator);
         UsersControllerTestHelpers.SetupUsers(_userService);
-        const long userId = 999;
-        var userViewModel = new EditUserViewModel { Id = userId };
+        var userViewModel = new EditUserViewModel { Id = UsersControllerTestHelpers.NonExistentId };
 
         // Act
-        var result = controller.Edit(userId, userViewModel);
+        var result = await controller.Edit(UsersControllerTestHelpers.NonExistentId, userViewModel).ConfigureAwait(false);
 
         // Assert
         result.Should().BeOfType<RedirectToActionResult>()
@@ -38,11 +38,11 @@ public class UsersControllerEditTests
         var redirectToActionResult = result as RedirectToActionResult;
         redirectToActionResult?.RouteValues
             .Should().HaveCount(1).And.ContainKey("id")
-            .WhoseValue.Should().BeEquivalentTo(userId);
+            .WhoseValue.Should().BeEquivalentTo(UsersControllerTestHelpers.NonExistentId);
     }
 
     [Fact]
-    public void Edit_WhenRequestingWithHasValidationErrorsValueOfFalse_ReturnsViewResultWithEditUserModel()
+    public async Task Edit_WhenRequestingWithHasValidationErrorsValueOfFalse_ReturnsViewResultWithEditUserModel()
     {
         // Arrange
         var controller = UsersControllerTestHelpers.CreateController(
@@ -67,7 +67,7 @@ public class UsersControllerEditTests
         };
 
         // Act
-        var result = controller.Edit(user.Id, viewModel);
+        var result = await controller.Edit(user.Id, viewModel).ConfigureAwait(false);
 
         // Assert
         result.Should().BeOfType<ViewResult>()
@@ -76,7 +76,7 @@ public class UsersControllerEditTests
     }
 
     [Fact]
-    public void Edit_WhenRequestingWithHasValidationErrorsValueOfTrue_ReturnsViewResultWithProvidedEditUserViewModel()
+    public async Task Edit_WhenRequestingWithHasValidationErrorsValueOfTrue_ReturnsViewResultWithProvidedEditUserViewModel()
     {
         // Arrange
         var controller = UsersControllerTestHelpers.CreateController(
@@ -101,7 +101,7 @@ public class UsersControllerEditTests
         };
 
         // Act
-        var result = controller.Edit(viewModel.Id, viewModel);
+        var result = await controller.Edit(viewModel.Id, viewModel).ConfigureAwait(false);
 
         // Assert
         _userService.Verify(service => service.GetUserById(viewModel.Id), Times.Never);

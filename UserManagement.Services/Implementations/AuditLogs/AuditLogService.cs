@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using UserManagement.Data;
 using UserManagement.Data.Entities;
-using UserManagement.Models.Logging;
+using UserManagement.Models.AuditLogging;
 using UserManagement.Services.Interfaces;
 using UserManagement.Services.Interfaces.AuditLogs;
 
@@ -20,20 +21,38 @@ public class AuditLogService : IAuditLogService
         _currentDateProvider = currentDateProvider;
     }
 
-    public IEnumerable<AuditLogEntry> GetAll() => _dataContext.GetAll<AuditLogEntry>();
+    public async Task<IEnumerable<AuditLogEntry>> GetAll() => 
+        await _dataContext
+            .GetAll<AuditLogEntry>()
+            .OrderBy(entry => entry.Time)
+            .ToListAsync()
+            .ConfigureAwait(false);
 
-    public IEnumerable<AuditLogEntry> FilterByAction(AuditLogAction filterType) => _dataContext
-        .GetAll<AuditLogEntry>()
-        .Where(entry => entry.Action == filterType);
+    public async Task<IEnumerable<AuditLogEntry>> FilterByAction(AuditLogAction filterType) =>
+        await _dataContext
+            .GetAll<AuditLogEntry>()
+            .OrderBy(entry => entry.Time)
+            .Where(entry => entry.Action == filterType)
+            .ToListAsync()
+            .ConfigureAwait(false);
 
-    public AuditLogEntry? GetAuditLogEntryById(long id) =>
-        _dataContext
+    public async Task<IEnumerable<AuditLogEntry>> FilterByUserId(long userId) =>
+        await _dataContext
+            .GetAll<AuditLogEntry>()
+            .Where(entry => entry.UserId == userId)
+            .OrderBy(entry => entry.Time)
+            .ToListAsync()
+            .ConfigureAwait(false);
+
+    public async Task<AuditLogEntry?> GetAuditLogEntryById(long id) =>
+        await _dataContext
             .GetAll<AuditLogEntry>()
             .Include(entry => entry.AfterSnapshot)
             .Include(entry => entry.BeforeSnapshot)
-            .FirstOrDefault(entry => entry.Id == id);
+            .FirstOrDefaultAsync(entry => entry.Id == id)
+            .ConfigureAwait(false);
 
-    public void LogCreate(User user)
+    public async Task LogCreate(User user)
     {
         var logEntry = new AuditLogEntry
         {
@@ -44,10 +63,10 @@ public class AuditLogService : IAuditLogService
             UserId = user.Id,
         };
 
-        _dataContext.Create(logEntry);
+        await _dataContext.Create(logEntry).ConfigureAwait(false);
     }
 
-    public void LogUpdate(User before, User after)
+    public async Task LogUpdate(User before, User after)
     {
         var logEntry = new AuditLogEntry
         {
@@ -59,10 +78,10 @@ public class AuditLogService : IAuditLogService
             UserId = after.Id,
         };
 
-        _dataContext.Create(logEntry);
+        await _dataContext.Create(logEntry).ConfigureAwait(false);
     }
 
-    public void LogDelete(User user)
+    public async Task LogDelete(User user)
     {
         var logEntry = new AuditLogEntry
         {
@@ -73,6 +92,6 @@ public class AuditLogService : IAuditLogService
             UserId = user.Id,
         };
 
-        _dataContext.Create(logEntry);
+        await _dataContext.Create(logEntry).ConfigureAwait(false);
     }
 }

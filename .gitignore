@@ -478,3 +478,4 @@ $RECYCLE.BIN/
 
 # Jetbrains IDE Metadata Directory
 .idea/
+.editorconfig

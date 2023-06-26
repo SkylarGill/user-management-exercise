@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using FluentValidation;
 using FluentValidation.Results;
 using UserManagement.Data.Entities;
@@ -12,6 +13,8 @@ namespace UserManagement.Web.Tests.Controllers.UsersController;
 
 public static class UsersControllerTestHelpers
 {
+    public const long NonExistentId = 999;
+    
     public static void SetupValidation(
         Mock<IValidator<CreateUserViewModel>> createUserViewModelValidator,
         Mock<IValidator<EditUserViewModel>> editUserViewModelValidator,
@@ -22,8 +25,8 @@ public static class UsersControllerTestHelpers
     {
         createUserViewModelValidator
             .Setup(
-                validator => validator.Validate(It.IsAny<CreateUserViewModel>()))
-            .Returns(
+                validator => validator.ValidateAsync(It.IsAny<CreateUserViewModel>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(
                 new ValidationResult(
                     shouldPassValidation
                         ? new List<ValidationFailure>()
@@ -31,8 +34,8 @@ public static class UsersControllerTestHelpers
 
         editUserViewModelValidator
             .Setup(
-                validator => validator.Validate(It.IsAny<EditUserViewModel>()))
-            .Returns(
+                validator => validator.ValidateAsync(It.IsAny<EditUserViewModel>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(
                 new ValidationResult(
                     shouldPassValidation
                         ? new List<ValidationFailure>()
@@ -74,22 +77,22 @@ public static class UsersControllerTestHelpers
 
         userService
             .Setup(s => s.GetAll())
-            .Returns(users);
+            .ReturnsAsync(users);
 
         userService
             .Setup(s => s.FilterByActive(true))
-            .Returns(users.Where(user => user.IsActive));
+            .ReturnsAsync(users.Where(user => user.IsActive));
 
         userService
             .Setup(s => s.FilterByActive(false))
-            .Returns(users.Where(user => !user.IsActive));
+            .ReturnsAsync(users.Where(user => !user.IsActive));
 
         var firstUser = users.First();
 
         userService
-            .Setup(s => s.GetUserById(firstUser.Id)).Returns(firstUser);
+            .Setup(s => s.GetUserById(firstUser.Id)).ReturnsAsync(firstUser);
         userService
-            .Setup(s => s.GetUserById(999)).Returns(null as User);
+            .Setup(s => s.GetUserById(NonExistentId)).ReturnsAsync(null as User);
 
         return users;
     }
