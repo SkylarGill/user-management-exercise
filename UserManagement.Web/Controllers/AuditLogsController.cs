@@ -49,7 +49,7 @@ public class AuditLogsController : Controller
 
         if (auditLogEntry is null)
         {
-            return NotFound();
+            return View("LogEntryNotFound", new LogNotFoundViewModel(id));
         }
 
         var beforeSnapshot = auditLogEntry.BeforeSnapshot is null
