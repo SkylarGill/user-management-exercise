@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using UserManagement.Data.Entities;
@@ -17,7 +18,7 @@ public class UsersControllerSubmitEditTests
     private readonly Mock<IAuditLogService> _auditLogService = new();
 
     [Fact]
-    public void SubmitEdit_WhenRequestingNonExistingUserId_ReturnsRedirectToActionOfUserNotFound()
+    public async Task SubmitEdit_WhenRequestingNonExistingUserId_ReturnsRedirectToActionOfUserNotFound()
     {
         // Arrange
         var controller = UsersControllerTestHelpers.CreateController(
@@ -33,7 +34,7 @@ public class UsersControllerSubmitEditTests
         var userViewModel = new EditUserViewModel { Id = userId };
 
         // Act
-        var result = controller.SubmitEdit(userId, userViewModel);
+        var result = await controller.SubmitEdit(userId, userViewModel).ConfigureAwait(false);
 
         // Assert
         result.Should().BeOfType<RedirectToActionResult>()
@@ -46,7 +47,7 @@ public class UsersControllerSubmitEditTests
     }
 
     [Fact]
-    public void SubmitEdit_WhenSubmittingUserWithValidationErrors_ReturnsViewResult()
+    public async Task SubmitEdit_WhenSubmittingUserWithValidationErrors_ReturnsViewResult()
     {
         // Arrange
         var controller = UsersControllerTestHelpers.CreateController(
@@ -73,7 +74,7 @@ public class UsersControllerSubmitEditTests
         };
 
         // Act
-        var result = controller.SubmitEdit(viewModel.Id, viewModel);
+        var result = await controller.SubmitEdit(viewModel.Id, viewModel).ConfigureAwait(false);
 
         // Assert
         _userService.Verify(service => service.UpdateUser(It.IsAny<User>()), Times.Never);
@@ -85,7 +86,7 @@ public class UsersControllerSubmitEditTests
     }
 
     [Fact]
-    public void SubmitEdit_WhenSubmittingUserWithValidationErrors_AddsValidationErrorsToModelState()
+    public async Task SubmitEdit_WhenSubmittingUserWithValidationErrors_AddsValidationErrorsToModelState()
     {
         // Arrange
         var controller = UsersControllerTestHelpers.CreateController(
@@ -114,7 +115,7 @@ public class UsersControllerSubmitEditTests
         };
 
         // Act
-        controller.SubmitEdit(viewModel.Id, viewModel);
+        await controller.SubmitEdit(viewModel.Id, viewModel).ConfigureAwait(false);
 
         // Assert
         controller.ModelState
@@ -124,7 +125,7 @@ public class UsersControllerSubmitEditTests
     }
 
     [Fact]
-    public void SubmitEdit_WhenSubmittingUserWithNoValidationErrors_CallsUpdateUserAndRedirectsToListAction()
+    public async Task SubmitEdit_WhenSubmittingUserWithNoValidationErrors_CallsUpdateUserAndRedirectsToListAction()
     {
         // Arrange
         var controller = UsersControllerTestHelpers.CreateController(
@@ -146,7 +147,7 @@ public class UsersControllerSubmitEditTests
         };
 
         // Act
-        var result = controller.SubmitEdit(viewModel.Id, viewModel);
+        var result = await controller.SubmitEdit(viewModel.Id, viewModel).ConfigureAwait(false);
 
         // Assert
         _userService.Verify(service => service.UpdateUser(It.Is<User>(u => u.Id == user.Id)), Times.Once);

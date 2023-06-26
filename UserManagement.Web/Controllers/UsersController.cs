@@ -160,9 +160,9 @@ public class UsersController : Controller
 
     [HttpPost]
     [Route("edit/{id:long}")]
-    public IActionResult SubmitEdit(long id, EditUserViewModel editUserViewModel)
+    public async Task<IActionResult> SubmitEdit(long id, EditUserViewModel editUserViewModel)
     {
-        var validationResult = _editUserViewModelValidator.Validate(editUserViewModel);
+        var validationResult = await _editUserViewModelValidator.ValidateAsync(editUserViewModel).ConfigureAwait(false);
 
         if (!validationResult.IsValid)
         {
@@ -188,7 +188,7 @@ public class UsersController : Controller
         user.IsActive = editUserViewModel.IsActive;
         user.DateOfBirth = editUserViewModel.DateOfBirth;
 
-        _userService.UpdateUser(user);
+        await _userService.UpdateUser(user).ConfigureAwait(false);
 
         return RedirectToAction("List");
     }

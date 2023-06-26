@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using FluentValidation;
 using FluentValidation.Results;
 using UserManagement.Data.Entities;
@@ -31,8 +32,8 @@ public static class UsersControllerTestHelpers
 
         editUserViewModelValidator
             .Setup(
-                validator => validator.Validate(It.IsAny<EditUserViewModel>()))
-            .Returns(
+                validator => validator.ValidateAsync(It.IsAny<EditUserViewModel>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(
                 new ValidationResult(
                     shouldPassValidation
                         ? new List<ValidationFailure>()

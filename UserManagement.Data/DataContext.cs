@@ -65,10 +65,10 @@ public class DataContext : DbContext, IDataContext
         await SaveChangesAsync().ConfigureAwait(false);
     }
 
-    public new void Update<TEntity>(TEntity entity) where TEntity : class
+    public async Task UpdateAsync<TEntity>(TEntity entity) where TEntity : class
     {
         base.Update(entity);
-        SaveChanges();
+        await SaveChangesAsync().ConfigureAwait(false);
     }
 
     public void Delete<TEntity>(TEntity entity) where TEntity : class

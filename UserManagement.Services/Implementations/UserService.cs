@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using UserManagement.Data;
 using UserManagement.Data.Entities;
@@ -30,22 +31,27 @@ public class UserService : IUserService
             .Where(user => user.IsActive == isActive);
 
     public IEnumerable<User> GetAll() => _dataAccess.GetAll<User>();
-    public void CreateUser(User user)
+    public async Task CreateUser(User user)
     {
-        _dataAccess.Create(user);
-        _auditLogService.LogCreate(user);
+        await _dataAccess.Create(user).ConfigureAwait(false);
+        await _auditLogService.LogCreate(user).ConfigureAwait(false);
     }
     
-    public void UpdateUser(User user)
+    public async Task UpdateUser(User user)
     {
-        var oldUser = _dataAccess.GetAll<User>().AsNoTracking().FirstOrDefault(u => u.Id == user.Id);
+        var oldUser = await _dataAccess
+            .GetAll<User>()
+            .AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Id == user.Id)
+            .ConfigureAwait(false);
+        
         if (oldUser is null)
         {
             throw new UserMissingFromDataContextException(user.Id);
         }
 
-        _dataAccess.Update(user);
-        _auditLogService.LogUpdate(oldUser, user);
+        await _dataAccess.UpdateAsync(user).ConfigureAwait(false);
+        await _auditLogService.LogUpdate(oldUser, user).ConfigureAwait(false);
     }
 
     public User? GetUserById (long id) =>

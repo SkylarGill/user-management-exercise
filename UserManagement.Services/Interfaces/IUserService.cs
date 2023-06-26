@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using UserManagement.Data.Entities;
 
 namespace UserManagement.Services.Interfaces;
@@ -12,8 +13,8 @@ public interface IUserService
     /// <returns></returns>
     IEnumerable<User> FilterByActive(bool isActive);
     IEnumerable<User> GetAll();
-    void CreateUser(User user);
-    void UpdateUser(User user);
+    Task CreateUser(User user);
+    Task UpdateUser(User user);
     User? GetUserById(long id);
     void DeleteUser(User user);
 }

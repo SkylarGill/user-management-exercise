@@ -12,6 +12,6 @@ public interface IAuditLogService
     Task<IEnumerable<AuditLogEntry>> FilterByUserId(long userId);
     Task<AuditLogEntry?> GetAuditLogEntryById(long id);
     Task LogCreate(User user);
-    void LogUpdate(User before, User after);
+    Task LogUpdate(User before, User after);
     void LogDelete(User user);
 }
