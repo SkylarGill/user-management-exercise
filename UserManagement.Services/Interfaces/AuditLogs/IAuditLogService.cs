@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UserManagement.Data.Entities;
-using UserManagement.Models.Logging;
+using UserManagement.Models.AuditLogging;
 
 namespace UserManagement.Services.Interfaces.AuditLogs;
 

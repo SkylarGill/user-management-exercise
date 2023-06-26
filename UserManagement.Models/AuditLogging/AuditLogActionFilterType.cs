@@ -1,4 +1,4 @@
-namespace UserManagement.Models.Logging;
+namespace UserManagement.Models.AuditLogging;
 
 public enum AuditLogActionFilterType
 {

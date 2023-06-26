@@ -2,7 +2,7 @@
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using UserManagement.Data.Entities;
-using UserManagement.Models.Logging;
+using UserManagement.Models.AuditLogging;
 
 namespace UserManagement.Data;
 

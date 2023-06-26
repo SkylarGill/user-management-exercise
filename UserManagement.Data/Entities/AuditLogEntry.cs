@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using UserManagement.Models.Logging;
+using UserManagement.Models.AuditLogging;
 
 namespace UserManagement.Data.Entities;
 

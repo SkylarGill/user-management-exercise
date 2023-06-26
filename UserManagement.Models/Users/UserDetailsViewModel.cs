@@ -1,4 +1,4 @@
-using UserManagement.Models.Logging;
+using UserManagement.Models.AuditLogging;
 
 namespace UserManagement.Models.Users;
 
