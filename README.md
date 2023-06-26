@@ -8,9 +8,19 @@
 
 - **FluentValidation** 
   - I used FluentValidation for implementing the request validation for create/update actions. 
-  - It's a library for implementing easily-understandable validation services. 
-  - No extra steps are required beyond restoring NuGet packages.
+  - Library for implementing easily-understandable validation services. 
+  - No extra setup steps are required beyond restoring NuGet packages.
+- **MockQueryable.Moq**
+  - Used to mock `IQueryables` that work with Entity Framework's asynchronous LINQ queries
+  - No extra setup steps are required beyond restoring NuGet packages.
 
+### Task 5 - Extend
+
+For this task, I opted to update the data access layer to use asynchronous operations.
+
+I found some conflicting information online about whether `.ConfigureAwait(false)` is still necessary in newer versions of ASP.NET due to no `SynchronizationContext` being provided. 
+
+This [blog article from Microsoft](https://devblogs.microsoft.com/dotnet/configureawait-faq/) indicates that external libraries may introduce a `SynchronizationContext` that could result in potential deadlocks. Therefore, I included `.ConfigureAwait(false)` on all `async` calls.
 
 ## Original Task
 
