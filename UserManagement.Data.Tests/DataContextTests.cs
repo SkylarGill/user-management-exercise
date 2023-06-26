@@ -1,6 +1,5 @@
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using UserManagement.Data.Entities;
 
 namespace UserManagement.Data.Tests;

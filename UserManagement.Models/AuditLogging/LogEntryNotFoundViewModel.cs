@@ -1,8 +1,8 @@
 namespace UserManagement.Models.AuditLogging;
 
-public class LogNotFoundViewModel
+public class LogEntryNotFoundViewModel
 {
-    public LogNotFoundViewModel(long id)
+    public LogEntryNotFoundViewModel(long id)
     {
         Id = id;
     }

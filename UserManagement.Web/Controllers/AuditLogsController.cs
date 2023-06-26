@@ -49,7 +49,7 @@ public class AuditLogsController : Controller
 
         if (auditLogEntry is null)
         {
-            return View("LogEntryNotFound", new LogNotFoundViewModel(id));
+            return RedirectToAction("LogEntryNotFound", new { id = id });
         }
 
         var beforeSnapshot = auditLogEntry.BeforeSnapshot is null
@@ -88,6 +88,13 @@ public class AuditLogsController : Controller
         };
 
         return View(viewModel);
+    }
+    
+    [HttpGet]
+    [Route("notfound/{id:long}")]
+    public IActionResult LogEntryNotFound([FromRoute] long id)
+    {
+        return View(new LogEntryNotFoundViewModel(id));
     }
 
     private async Task<IEnumerable<AuditLogEntry>> GetFilteredAuditLogs(AuditLogActionFilterType filterType) =>
