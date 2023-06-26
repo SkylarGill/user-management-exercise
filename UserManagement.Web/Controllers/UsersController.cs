@@ -20,8 +20,8 @@ public class UsersController : Controller
     private readonly IAuditLogService _auditLogService;
 
     public UsersController(
-        IUserService userService, 
-        IValidator<CreateUserViewModel> createUserViewModelValidator, 
+        IUserService userService,
+        IValidator<CreateUserViewModel> createUserViewModelValidator,
         IValidator<EditUserViewModel> editUserViewModelValidator,
         IAuditLogService auditLogService)
     {
@@ -33,18 +33,21 @@ public class UsersController : Controller
 
 
     [HttpGet]
-    public ViewResult List(FilterType filterType = FilterType.All)
+    public async Task<ViewResult> List(FilterType filterType = FilterType.All)
     {
-        var items = GetFilteredUsers(filterType)
-            .Select(p => new UserListItemViewModel
-            {
-                Id = p.Id,
-                Forename = p.Forename,
-                Surname = p.Surname,
-                Email = p.Email,
-                IsActive = p.IsActive,
-                DateOfBirth = p.DateOfBirth
-            });
+        var users = await GetFilteredUsers(filterType).ConfigureAwait(false);
+
+        var items = users
+            .Select(
+                p => new UserListItemViewModel
+                {
+                    Id = p.Id,
+                    Forename = p.Forename,
+                    Surname = p.Surname,
+                    Email = p.Email,
+                    IsActive = p.IsActive,
+                    DateOfBirth = p.DateOfBirth
+                });
 
         var model = new UserListViewModel
         {
@@ -60,7 +63,7 @@ public class UsersController : Controller
     {
         return View();
     }
-    
+
     [HttpPost]
     [Route("create")]
     public IActionResult Create([Bind] CreateUserViewModel createUserViewModel)
@@ -72,8 +75,9 @@ public class UsersController : Controller
             ModelState.Clear();
             foreach (var error in validationResult.Errors)
             {
-                ModelState.AddModelError(error.PropertyName, error.ErrorMessage);   
-            }   
+                ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+            }
+
             return View(createUserViewModel);
         }
 
@@ -85,7 +89,7 @@ public class UsersController : Controller
             IsActive = createUserViewModel.IsActive,
             DateOfBirth = createUserViewModel.DateOfBirth
         };
-        
+
         _userService.CreateUser(user);
 
         return RedirectToAction("List");
@@ -93,7 +97,7 @@ public class UsersController : Controller
 
     [HttpGet]
     [Route("{id:long}")]
-    public async Task<IActionResult> Details ([FromRoute]long id)
+    public async Task<IActionResult> Details([FromRoute] long id)
     {
         var user = _userService.GetUserById(id);
 
@@ -124,7 +128,7 @@ public class UsersController : Controller
             IsActive = user.IsActive,
             AuditLogEntries = logListItemViewModels.ToList()
         };
-        
+
         return View(userViewModel);
     }
 
@@ -136,7 +140,7 @@ public class UsersController : Controller
         {
             return View(editUserViewModel);
         }
-        
+
         var user = _userService.GetUserById(id);
 
         if (user is null)
@@ -169,9 +173,9 @@ public class UsersController : Controller
             ModelState.Clear();
             foreach (var error in validationResult.Errors)
             {
-                ModelState.AddModelError(error.PropertyName, error.ErrorMessage);   
-            }   
-            
+                ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+            }
+
             editUserViewModel.HasValidationErrors = true;
             return View("Edit", editUserViewModel);
         }
@@ -193,7 +197,7 @@ public class UsersController : Controller
         return RedirectToAction("List");
     }
 
-    
+
     [HttpGet]
     [Route("delete/{id:long}")]
     public async Task<IActionResult> Delete(long id)
@@ -204,12 +208,12 @@ public class UsersController : Controller
         {
             return RedirectToAction("UserNotFound", new { id = id });
         }
-        
+
         await _userService.DeleteUser(user).ConfigureAwait(false);
 
         return RedirectToAction("List");
     }
-    
+
 
     [HttpGet]
     [Route("notfound/{id:long}")]
@@ -217,15 +221,14 @@ public class UsersController : Controller
     {
         return View(new UserNotFoundViewModel(id));
     }
-    
 
-    private IEnumerable<User> GetFilteredUsers(FilterType filterType) =>
+
+    private async Task<IEnumerable<User>> GetFilteredUsers(FilterType filterType) =>
         filterType switch
         {
-            FilterType.All => _userService.GetAll(),
-            FilterType.Active => _userService.FilterByActive(true),
-            FilterType.NonActive => _userService.FilterByActive(false),
+            FilterType.All => await _userService.GetAll().ConfigureAwait(false),
+            FilterType.Active => await _userService.FilterByActive(true).ConfigureAwait(false),
+            FilterType.NonActive => await _userService.FilterByActive(false).ConfigureAwait(false),
             _ => throw new ArgumentOutOfRangeException(nameof(filterType), filterType, null)
         };
 }
-

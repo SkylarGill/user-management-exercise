@@ -75,15 +75,15 @@ public static class UsersControllerTestHelpers
 
         userService
             .Setup(s => s.GetAll())
-            .Returns(users);
+            .ReturnsAsync(users);
 
         userService
             .Setup(s => s.FilterByActive(true))
-            .Returns(users.Where(user => user.IsActive));
+            .ReturnsAsync(users.Where(user => user.IsActive));
 
         userService
             .Setup(s => s.FilterByActive(false))
-            .Returns(users.Where(user => !user.IsActive));
+            .ReturnsAsync(users.Where(user => !user.IsActive));
 
         var firstUser = users.First();
 

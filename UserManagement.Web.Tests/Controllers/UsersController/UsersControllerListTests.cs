@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using FluentValidation;
 using UserManagement.Models;
 using UserManagement.Models.Users;
@@ -14,7 +15,7 @@ public class UsersControllerListTests
     private readonly Mock<IAuditLogService> _auditLogService = new();
 
     [Fact]
-    public void List_WhenServiceReturnsUsers_ModelMustContainUsers()
+    public async Task List_WhenServiceReturnsUsers_ModelMustContainUsers()
     {
         // Arrange: Initializes objects and sets the value of the data that is passed to the method under test.
         var controller = UsersControllerTestHelpers.CreateController(
@@ -25,7 +26,7 @@ public class UsersControllerListTests
         var users = UsersControllerTestHelpers.SetupUsers(_userService);
 
         // Act: Invokes the method under test with the arranged parameters.
-        var result = controller.List();
+        var result = await controller.List().ConfigureAwait(false);
 
         // Assert: Verifies that the action of the method under test behaves as expected.
         result.Model
@@ -34,7 +35,7 @@ public class UsersControllerListTests
     }
 
     [Fact]
-    public void List_WhenSpecifyingActiveFilterType_ModelMustOnlyContainActiveUsers()
+    public async Task List_WhenSpecifyingActiveFilterType_ModelMustOnlyContainActiveUsers()
     {
         // Arrange
         var controller = UsersControllerTestHelpers.CreateController(
@@ -45,7 +46,7 @@ public class UsersControllerListTests
         UsersControllerTestHelpers.SetupUsers(_userService);
 
         // Act
-        var result = controller.List(FilterType.Active);
+        var result = await controller.List(FilterType.Active).ConfigureAwait(false);
 
         // Assert
         _userService.Verify(service => service.FilterByActive(true), Times.Once);
@@ -55,7 +56,7 @@ public class UsersControllerListTests
     }
 
     [Fact]
-    public void List_WhenSpecifyingNonActiveFilterType_ModelMustOnlyContainNonActiveUsers()
+    public async Task List_WhenSpecifyingNonActiveFilterType_ModelMustOnlyContainNonActiveUsers()
     {
         // Arrange
         var controller = UsersControllerTestHelpers.CreateController(
@@ -66,7 +67,7 @@ public class UsersControllerListTests
         UsersControllerTestHelpers.SetupUsers(_userService);
 
         // Act
-        var result = controller.List(FilterType.NonActive);
+        var result = await controller.List(FilterType.NonActive).ConfigureAwait(false);
 
         // Assert
         _userService.Verify(service => service.FilterByActive(false), Times.Once);

@@ -1,5 +1,8 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using MockQueryable.Moq;
 using UserManagement.Data;
 using UserManagement.Data.Entities;
 using UserManagement.Services.Implementations;
@@ -10,42 +13,42 @@ namespace UserManagement.Services.Tests;
 public class UserServiceTests
 {
     [Fact]
-    public void GetAll_WhenContextReturnsEntities_MustReturnSameEntities()
+    public async Task GetAll_WhenContextReturnsEntities_MustReturnSameEntities()
     {
         // Arrange: Initializes objects and sets the value of the data that is passed to the method under test.
         var service = CreateService();
         var users = SetupUsers();
 
         // Act: Invokes the method under test with the arranged parameters.
-        var result = service.GetAll();
+        var result = await service.GetAll().ConfigureAwait(false);
 
         // Assert: Verifies that the action of the method under test behaves as expected.
-        result.Should().BeSameAs(users);
+        result.Should().BeEquivalentTo(users);
     } 
     
     [Fact]
-    public void FilterByActive_WhenIsActiveParamIsTrue_MustOnlyReturnEntitiesTrueIsActiveValue()
+    public async Task FilterByActive_WhenIsActiveParamIsTrue_MustOnlyReturnEntitiesTrueIsActiveValue()
     {
         // Arrange
         var service = CreateService();
         SetupUsers();
 
         // Act
-        var result = service.FilterByActive(true);
+        var result = await service.FilterByActive(true).ConfigureAwait(false);
 
         //Assert
         result.Should().AllSatisfy(model => model.IsActive.Should().BeTrue());;
     }
     
     [Fact]
-    public void FilterByActive_WhenIsActiveParamIsFalse_MustOnlyReturnEntitiesWithFalseIsActiveValue()
+    public async Task FilterByActive_WhenIsActiveParamIsFalse_MustOnlyReturnEntitiesWithFalseIsActiveValue()
     {
         // Arrange
         var service = CreateService();
         SetupUsers();
 
         // Act
-        var result = service.FilterByActive(false);
+        var result = await service.FilterByActive(false).ConfigureAwait(false);
 
         //Assert
         result.Should().AllSatisfy(model => model.IsActive.Should().BeFalse());;
@@ -60,7 +63,7 @@ public class UserServiceTests
                 Forename = forename,
                 Surname = surname,
                 Email = email,
-                IsActive = isActive, 
+                IsActive = isActive,
                 DateOfBirth = new DateTime(1990, 6, 24)
             },
             new User
@@ -68,7 +71,7 @@ public class UserServiceTests
                 Forename = "David",
                 Surname = "NonActive",
                 Email = "inactive@example.com",
-                IsActive = false, 
+                IsActive = false,
                 DateOfBirth = new DateTime(1984, 12, 1)
             },
             new User
@@ -76,14 +79,17 @@ public class UserServiceTests
                 Forename = "Sarah",
                 Surname = "Active",
                 Email = "active@example.com",
-                IsActive = true, 
+                IsActive = true,
                 DateOfBirth = new DateTime(1963, 7, 14)
             },
         }.AsQueryable();
 
+        var mockDbSet = users.BuildMock(); 
+        
+        
         _dataContext
             .Setup(s => s.GetAll<User>())
-            .Returns(users);
+            .Returns(mockDbSet);
 
         return users;
     }

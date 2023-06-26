@@ -26,17 +26,25 @@ public class UserService : IUserService
     /// </summary>
     /// <param name="isActive"></param>
     /// <returns></returns>
-    public IEnumerable<User> FilterByActive(bool isActive) =>
-        _dataAccess.GetAll<User>()
-            .Where(user => user.IsActive == isActive);
+    public async Task<IEnumerable<User>> FilterByActive(bool isActive) =>
+        await _dataAccess
+            .GetAll<User>()
+            .Where(user => user.IsActive == isActive)
+            .ToListAsync()
+            .ConfigureAwait(false);
 
-    public IEnumerable<User> GetAll() => _dataAccess.GetAll<User>();
+    public async Task<IEnumerable<User>> GetAll() =>
+        await _dataAccess
+            .GetAll<User>()
+            .ToListAsync()
+            .ConfigureAwait(false);
+
     public async Task CreateUser(User user)
     {
         await _dataAccess.Create(user).ConfigureAwait(false);
         await _auditLogService.LogCreate(user).ConfigureAwait(false);
     }
-    
+
     public async Task UpdateUser(User user)
     {
         var oldUser = await _dataAccess
@@ -44,7 +52,7 @@ public class UserService : IUserService
             .AsNoTracking()
             .FirstOrDefaultAsync(u => u.Id == user.Id)
             .ConfigureAwait(false);
-        
+
         if (oldUser is null)
         {
             throw new UserMissingFromDataContextException(user.Id);
@@ -54,7 +62,7 @@ public class UserService : IUserService
         await _auditLogService.LogUpdate(oldUser, user).ConfigureAwait(false);
     }
 
-    public User? GetUserById (long id) =>
+    public User? GetUserById(long id) =>
         _dataAccess.GetAll<User>()
             .FirstOrDefault(user => user.Id == id);
 
