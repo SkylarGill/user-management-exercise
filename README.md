@@ -10,7 +10,7 @@ The `main` branch contains the latest, up-to-date changes.
 
 Each task was developed on its own branch and squash merged into `main` so each commit completes a task. Task branches match the format `taskX-description`. There is also a pull request for each branch.
 
-There is a CI GitHub Action for building the solution and running unit tests in PRs in addition to commits to `main`. 
+There is a CI GitHub Action for building the solution and running unit tests in PRs, in addition to commits to `main`. 
 
 ### Packages
 
